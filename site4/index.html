@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Бюджет недели (Темная тема)</title>
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #121212;
+        color: #e0e0e0;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #fff;
+    }
+
+    table {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto 20px auto;
+        border-collapse: collapse;
+        background: #1e1e1e;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    th,
+    td {
+        border: 1px solid #333;
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background: #008cba;
+        color: #fff;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+        width: 80px;
+        padding: 5px;
+        text-align: right;
+        background: #333;
+        border: 1px solid #555;
+        color: #fff;
+        border-radius: 4px;
+    }
+
+    input[type="text"] {
+        width: 250px;
+        text-align: left;
+    }
+
+    tfoot td {
+        font-weight: bold;
+        background: #222;
+    }
+
+    button {
+        display: inline-block;
+        margin: 10px 5px;
+        padding: 10px 25px;
+        background: #008cba;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #005f8a;
+        /* background-color: #360500; */
+    }
+
+    #clearBtn {
+        background: #e74c3c;
+    }
+
+    #clearBtn:hover {
+        background: #c0392b;
+    }
+
+    #output {
+        width: 100%;
+        max-width: 900px;
+        height: 200px;
+        margin: 20px auto;
+        padding: 10px;
+        background: #1e1e1e;
+        color: #e0e0e0;
+        border: 1px solid #555;
+        border-radius: 5px;
+        font-family: monospace;
+        overflow-y: auto;
+
+        
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 20px auto;
+        text-align: center;
+    }
+
+    label {
+        margin-right: 10px;
+    }
+
+</style>
+</head>
+
+<body>
+
+<h1>Подсчет недельной ЗП</h1>
+
+<div class="container">
+    <label>Кошелек: <input type="text" id="wallet" placeholder="0x..."></label>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>День</th>
+            <th>Реклама ($)</th>
+            <th>Касса ($)</th>
+            <th>Результат ($)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Понедельник</td>
+            <td><input type="number" class="ads" value="0"></td>
+            <td><input type="number" class="cash" value="0"></td>
+            <td class="day-result">0</td>
+        </tr>
+        <tr>
+            <td>Вторник</td>
+            <td><input type="number" class="ads" value="0"></td>
+            <td><input type="number" class="cash" value="0"></td>
+            <td class="day-result">0</td>
+        </tr>
+        <tr>
+            <td>Среда</td>
+            <td><input type="number" class="ads" value="0"></td>
+            <td><input type="number" class="cash" value="0"></td>
+            <td class="day-result">0</td>
+        </tr>
+        <tr>
+            <td>Четверг</td>
+            <td><input type="number" class="ads" value="0"></td>
+            <td><input type="number" class="cash" value="0"></td>
+            <td class="day-result">0</td>
+        </tr>
+        <tr>
+            <td>Пятница</td>
+            <td><input type="number" class="ads" value="0"></td>
+            <td><input type="number" class="cash" value="0"></td>
+            <td class="day-result">0</td>
+        </tr>
+        <tr>
+            <td>Суббота</td>
+            <td><input type="number" class="ads" value="0"></td>
+            <td><input type="number" class="cash" value="0"></td>
+            <td class="day-result">0</td>
+        </tr>
+        <tr>
+            <td>Воскресенье</td>
+            <td><input type="number" class="ads" value="0"></td>
+            <td><input type="number" class="cash" value="0"></td>
+            <td class="day-result">0</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>Итого</td>
+            <td id="total-ads">0</td>
+            <td id="total-cash">0</td>
+            <td id="total-result">0</td>
+        </tr>
+    </tfoot>
+</table>
+
+<div class="container">
+    <button id="calculate">Посчитать</button>
+    <button id="copy">Скопировать шаблон</button>
+    <button id="clearBtn">Очистить таблицу</button>
+    <textarea id="output" readonly placeholder="Здесь появится текст отчета для Йоды"></textarea>
+</div>
+
+<script>
+const adsInputs = document.querySelectorAll('.ads');
+const cashInputs = document.querySelectorAll('.cash');
+const dayResults = document.querySelectorAll('.day-result');
+const totalAdsEl = document.getElementById('total-ads');
+const totalCashEl = document.getElementById('total-cash');
+const totalResultEl = document.getElementById('total-result');
+const salaryEl = document.getElementById('output');
+const walletInput = document.getElementById('wallet');
+const clearBtn = document.getElementById('clearBtn');
+
+// Восстановление данных из localStorage
+if (localStorage.getItem('wallet')) walletInput.value = localStorage.getItem('wallet');
+if (localStorage.getItem('ads')) JSON.parse(localStorage.getItem('ads')).forEach((v,i)=>adsInputs[i].value=v);
+if (localStorage.getItem('cash')) JSON.parse(localStorage.getItem('cash')).forEach((v,i)=>cashInputs[i].value=v);
+
+// Сохраняем данные
+walletInput.addEventListener('input', ()=>localStorage.setItem('wallet', walletInput.value));
+function saveTable(){
+    localStorage.setItem('ads', JSON.stringify(Array.from(adsInputs).map(i=>i.value)));
+    localStorage.setItem('cash', JSON.stringify(Array.from(cashInputs).map(i=>i.value)));
+}
+adsInputs.forEach(i=>i.addEventListener('input', ()=>{calculateDaily(); saveTable();}));
+cashInputs.forEach(i=>i.addEventListener('input', ()=>{calculateDaily(); saveTable();}));
+
+// Подсчет дневных и итоговых значений с подсветкой
+function calculateDaily(){
+    let totalAds=0, totalCash=0;
+    adsInputs.forEach((input,i)=>{
+        const ads=parseFloat(input.value)||0;
+        const cash=parseFloat(cashInputs[i].value)||0;
+        const result=(input.value!==''&&cashInputs[i].value!=='')?cash-ads:0;
+        dayResults[i].textContent=result.toFixed(2);
+
+        // Цвет подсветки
+        if(result>0) dayResults[i].style.background='#0f2904'; // зеленый
+        else if(result<0) dayResults[i].style.background='#360500'; // красный
+        else dayResults[i].style.background='#1e1e1e'; // нейтральный
+
+        totalAds+=ads; totalCash+=cash;
+    });
+    totalAdsEl.textContent=totalAds.toFixed(2);
+    totalCashEl.textContent=totalCash.toFixed(2);
+    totalResultEl.textContent=(totalCash-totalAds).toFixed(2);
+}
+calculateDaily();
+
+// Генерация текста по кнопке
+document.getElementById('calculate').addEventListener('click', ()=>{
+    let totalAds=0,totalCash=0,adsArr=[],cashArr=[];
+    adsInputs.forEach((i,n)=>{
+        const a=parseFloat(i.value)||0,c=parseFloat(cashInputs[n].value)||0;
+        totalAds+=a; totalCash+=c;
+        adsArr.push(a); cashArr.push(c);
+    });
+    const totalResult=totalCash-totalAds;
+    const salary=totalResult*0.15;
+    salaryEl.value=`РЕКЛАМА ${adsArr.join(' + ')} = ${totalAds.toFixed(2)}$
+СДАЛ ${cashArr.join(' + ')} = ${totalCash.toFixed(2)}$
+
+ПРИБЫЛЬ ${totalCash.toFixed(2)} - ${totalAds.toFixed(2)} = ${totalResult.toFixed(2)}$
+ЗП = ${totalResult.toFixed(2)} * 15% = ${salary.toFixed(2)}$
+
+Кошелек - ${walletInput.value||'не указан'}`;
+});
+
+// Копирование
+document.getElementById('copy').addEventListener('click', ()=>{salaryEl.select(); document.execCommand('copy');});
+
+// Очистка таблицы
+clearBtn.addEventListener('click', ()=>{
+    adsInputs.forEach(i=>i.value=0);
+    cashInputs.forEach(i=>i.value=0);
+    calculateDaily();
+    saveTable();
+    salaryEl.value='';
+});
+</script>
+
+</body>
+</html>

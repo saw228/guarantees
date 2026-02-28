@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&display=swap">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+
+
+    <title>Phone Screen Cancel</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+
+
+        :root {
+            --text-color: #eaeaea;
+        }
+
+
+        :root {
+            --preview-scale: 0.5;
+        }
+
+        @font-face {
+            font-family: "SF Pro Text";
+            src: url("./fonts/SFProText-Regular.ttf") format("truetype");
+            font-weight: 400;
+        }
+
+        @font-face {
+            font-family: "SF Pro Text";
+            src: url("./fonts/SFProText-Medium.ttf") format("truetype");
+            font-weight: 500;
+        }
+
+
+        body {
+            background: linear-gradient(180deg, #232526, #414345) !important;
+            margin: 0;
+            min-height: 100vh;
+            background: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            font-family: -apple-system, BlinkMacSystemFont,
+                "SF Pro Text", "SF Pro Display",
+                "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        /* ================= ОБЩИЙ СТИЛЬ ЭКРАНА ================= */
+
+        .phone-screen {
+            width: 588px;
+            height: 1280px;
+            background-color: #121212;
+            border: 1px solid #333;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* ================= ПРЕВЬЮ ================= */
+
+        .preview-wrapper {
+            width: calc(588px * var(--preview-scale));
+            height: calc(1280px * var(--preview-scale));
+        }
+
+        .screen-preview {
+            border-radius: 20px;
+            transform: scale(var(--preview-scale));
+            transform-origin: top left;
+        }
+
+        /* ================= ЭКСПОРТ ================= */
+
+        .screen-export {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+        }
+
+        /* ================= UI ================= */
+
+        .phone-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0 25px;
+        }
+
+        .phone-header-time {
+
+            color: white;
+
+            font-size: 24px;
+
+            font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif;
+
+
+        }
+
+        .phone-header-charge {
+            width: 140px;
+        }
+
+        .phone-sber-title {
+            position: absolute;
+            top: 115px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-color);
+            font-size: 27px;
+            font-weight: 500
+        }
+
+        .green-arrow {
+            position: absolute;
+            top: 95px;
+            width: 50px;
+        }
+
+        .card-image {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            top: 330px;
+            width: 280px;
+        }
+
+        .main-sum {
+            color: var(--text-color);
+            position: absolute;
+            left: 52%;
+            transform: translate(-50%, -50%);
+            top: 480px;
+            font-family: "Inter Tight", sans-serif;
+            font-size: 45px;
+            font-weight: 500;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .transer-cancel {
+            color: rgb(156, 156, 156);
+            top: 535px;
+            font-size: 24px;
+            font-weight: 600;
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .spravka {
+            display: flex;
+            position: absolute;
+            align-items: center;
+            top: 620px;
+            max-width: 235px;
+            border-radius: 20px;
+            padding: 10px;
+            background-color: #1e1e1e;
+            gap: 10px;
+        }
+
+        .spravka-img {
+            width: 65px;
+        }
+
+        .spravka-text {
+            color: var(--text-color);
+            font-size: 25px;
+
+        }
+
+        .drag-bar {
+            width: 60px;
+            /* длина палочки */
+            height: 6px;
+            /* толщина */
+            background: #808080;
+            /* серый цвет */
+            border-radius: 3px;
+            /* скругление краёв */
+            margin: 8px auto;
+            /* центрирование по горизонтали */
+            margin-top: 15px;
+        }
+
+
+
+        /* ================= КНОПКА ================= */
+
+        #copy-btn {
+            background: linear-gradient(135deg, #e0e0e0, #cfcfcf);
+            /* перелив серого */
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            /* кнопки меньше */
+            font-size: 13px;
+            font-family: "Segoe UI", sans-serif;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            min-width: 140px;
+            /* одинаковая ширина */
+            text-align: center;
+        }
+
+        #copy-btn:hover {
+            background: linear-gradient(135deg, #d6d6d6, #bfbfbf);
+            /* чуть темнее при наведении */
+            color: #222;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* #copy-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        } */
+
+        #copy-btn.copied {
+            background: #0a6305;
+            color: white;
+            font-weight: bold;
+        }
+
+        .info {
+            position: absolute;
+            left: -5px;
+            bottom: 0;
+            border-top-left-radius: 35px;
+            /* закругление сверху слева */
+            border-top-right-radius: 35px;
+            background-color: #1e1e1e;
+            width: 600px;
+            height: 42%;
+        }
+
+        .info-alert {
+            position: absolute;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #3a2d25;
+            width: 90%;
+            padding: 20px;
+            border-radius: 20px;
+        }
+
+        .info-alert-icon {
+            width: 50px;
+        }
+
+        .info-alert-text {
+            color: var(--text-color);
+            font-size: 22px;
+        }
+
+        .details {
+            position: absolute;
+            color: var(--text-color);
+            font-size: 33px;
+            bottom: 330px;
+            margin-left: 10px;
+            font-weight: 500;
+        }
+
+        .details-title {
+            color: #989898;
+            font-size: 19px;
+            font-weight: 500;
+        }
+
+        .write-off-account {
+            position: absolute;
+            bottom: 265px;
+            margin-left: 10px;
+        }
+
+        .data-and-time {
+            position: absolute;
+            bottom: 130px;
+            margin-left: 10px;
+        }
+
+        .data-and-time-text {
+            color: rgb(216, 216, 216);
+            font-size: 24px;
+            position: absolute;
+            bottom: 90px;
+            margin-left: 10px;
+            font-weight: 500;
+        }
+
+        .payment-account {
+            /* color: var(--text-color); */
+            color: #989898;
+            font-size: 22px;
+            position: absolute;
+            bottom: 225px;
+            margin-left: 10px;
+        }
+
+        .number-of-card {
+            color: var(--text-color);;
+            font-size: 22px;
+            position: absolute;
+            bottom: 190px;
+            margin-left: 10px;
+            font-weight: 500;
+        }
+
+        .type-of-operation {
+            color: #989898;
+            position: absolute;
+            bottom: 38px;
+            margin-left: 10px;
+        }
+
+        .type-of-operation-text {
+
+            color: var(--text-color);
+            font-size: 24px;
+            position: absolute;
+            bottom: 5px;
+            margin-left: 10px;
+        }
+
+        .divider1 {
+            position: absolute;
+            color: rgb(53, 53, 53);
+            bottom: 165px;
+            font-size: 30px;
+        }
+
+        .divider2 {
+            position: absolute;
+            color: rgb(53, 53, 53);
+            bottom: 70px;
+            font-size: 30px;
+        }
+
+        .home-indicator {
+            position: absolute;
+            left: 50%;
+            bottom: 8px;
+            transform: translateX(-50%);
+
+            width: 180px;
+            height: 7px;
+            border-radius: 3px;
+
+            background: rgba(255, 255, 255, 0.9);
+
+            z-index: 9999;
+        }
+
+        .templates {
+            position: absolute;
+            left: 50px;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            /* кнопки идут вниз */
+            gap: 10px;
+            /* расстояние между кнопками */
+            align-items: center;
+            /* центрируем по горизонтали */
+            margin: 20px 0;
+        }
+
+        .templates-item {
+            background: linear-gradient(135deg, #e0e0e0, #cfcfcf);
+            /* перелив серого */
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            /* кнопки меньше */
+            font-size: 13px;
+            font-family: "Segoe UI", sans-serif;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            min-width: 140px;
+            /* одинаковая ширина */
+            text-align: center;
+        }
+
+        .templates-item:hover {
+            background: linear-gradient(135deg, #d6d6d6, #bfbfbf);
+            /* чуть темнее при наведении */
+            color: #222;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .templates-item:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .change-data-time {
+            margin-top: 30px;
+            background: #f3f3f3;
+            color: #222;
+
+            border: 1px solid #c8c8c8;
+            border-radius: 6px;
+
+            padding: 7px 12px;
+            font-size: 13px;
+            font-family: "Segoe UI", system-ui, sans-serif;
+
+            min-width: 140px;
+            height: 32px;
+
+            outline: none;
+            transition: border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        /* hover — очень аккуратно */
+        .change-data-time:hover {
+            background: #f0f0f0;
+            border-color: #bcbcbc;
+        }
+
+        /* focus — ЧЁТКО, но не кричаще */
+        .change-data-time:focus {
+            background: #ffffff;
+            border-color: #7a7a7a;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+        }
+
+        /* placeholder */
+        .change-data-time::placeholder {
+            color: #8a8a8a;
+        }
+
+        .change-CON {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        .change-CON-item {
+            background-color: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-family: "Segoe UI", sans-serif;
+            cursor: pointer;
+            min-width: 140px;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        }
+
+        .change-CON-item:hover {
+            background-color: #d6d6d6;
+            transform: translateY(-2px);
+        }
+
+        .change-CON-item.active {
+            background-color: white;
+            color: black;
+            font-weight: bold;
+        }
+
+        .change-numberOfPhone {
+            display: none;
+        }
+
+        .change-numberOfCart,
+        .change-numberOfPhone,
+        .change-numberOfCard {
+            background: #f3f3f3;
+            color: #222;
+
+            border: 1px solid #c8c8c8;
+            border-radius: 6px;
+
+            padding: 7px 12px;
+            font-size: 13px;
+            font-family: "Segoe UI", system-ui, sans-serif;
+
+            min-width: 185px;
+            height: 32px;
+
+            outline: none;
+            transition: border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .change-numberOfCart:hover,
+        .change-numberOfPhone:hover,
+        .change-numberOfCard:hover {
+            background: #f0f0f0;
+            border-color: #bcbcbc;
+        }
+
+        .change-numberOfCart:focus,
+        .change-numberOfPhone:focus,
+        .change-numberOfCard:focus {
+            background: #ffffff;
+            border-color: #7a7a7a;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+        }
+
+        .change-numberOfCard {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================= ПРЕВЬЮ ================= -->
+    <div class="preview-wrapper">
+        <div class="phone-screen screen-preview" id="preview-screen">
+            <div class="phone-header">
+                <span id="time-output" class="phone-header-time">12:00</span>
+                <img class="phone-header-charge" src="./source/hargee.png" alt="">
+            </div>
+
+            <span class="phone-sber-title">Платёж не выполнен</span>
+            <img src="./source/green-arrow.png" class="green-arrow" alt="">
+
+            <img class="card-image" src="./source/card.jpg" alt="">
+
+            <span class="main-sum">200 000 ₽</span>
+
+            <span class="transer-cancel">Перевод не выполнен</span>
+
+            <div class="spravka">
+                <img src="./source/spravka.png" class="spravka-img" alt="">
+                <span class="spravka-text">Сохранить справку</span>
+            </div>
+
+            <div class="info">
+                <div class="drag-bar"></div>
+
+                <div class="info-alert">
+                    <img src="./source/i.png" alt="" class="info-alert-icon">
+                    <span class="info-alert-text">Ошибка «Блокировка Антифрод»</span>
+                </div>
+            </div>
+
+            <span class="details">Подробности</span>
+
+            <span class="payment-account">Платежный счёт</span>
+            <span class="number-of-card">••6591</span>
+
+            <div class="divider1">...................................................................................
+            </div>
+
+            <span class="details-title data-and-time">Дата и время</span>
+
+            <span class=" data-and-time-text"><span id="date-output"></span> <span
+                    id="time-output-2">12:00</span></span>
+
+            <div class="divider2">...................................................................................
+            </div>
+
+
+            <span class="details-title type-of-operation">Тип операции</span>
+
+            <span class="type-of-operation-text">Перевод</span>
+
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+
+    <!-- ================= ЭКСПОРТ (СКРЫТЫЙ) ================= -->
+    <div class="phone-screen screen-export" id="export-screen"></div>
+
+    <button id="copy-btn">Скопировать</button>
+
+
+
+    <div class="templates">
+        <button class="templates-item" id="OTMENA3" onclick="ot1()">ОТМЕНА 1К</button>
+        <button class="templates-item" id="OTMENA3" onclick="ot3()">ОТМЕНА 3К</button>
+        <button class="templates-item" id="OTMENA8" onclick="ot8()">ОТМЕНА 8К</button>
+        <button class="templates-item" id="OTMENA23" onclick="ot23()">ОТМЕНА 23К</button>
+        <button class="templates-item" id="OTMENA200" onclick="ot200()">ОТМЕНА 200К</button>
+
+        <input class="change-data-time" type="text">
+
+        <div class="change-CON">
+            <button class="change-CON-item active" onclick="changeOnCart()">Платежный счет</button>
+            <button class="change-CON-item" onclick="changeOnCard()">Номер карты</button>
+            <button class="change-CON-item" onclick="changeOnPhone()">Номер Телефона</button>
+        </div>
+
+
+        <input type="text" maxlength="4" inputmode="numeric" class="change-numberOfCart"
+            placeholder="Последние 4 цифры карты" type="text">
+        <input class="change-numberOfPhone" placeholder="Введите номер телефона" type="text">
+        <input class="change-numberOfCard" placeholder="Введите номер карты" type="text">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script>
+
+        const cardFullInput = document.querySelector('.change-numberOfCard');
+
+        cardFullInput.addEventListener('input', () => {
+            // Берём только цифры
+            let digits = cardFullInput.value.replace(/\D/g, '');
+
+            // Ограничиваем до 16 цифр
+            if (digits.length > 16) digits = digits.slice(0, 16);
+
+            // Форматируем: добавляем пробелы каждые 4 цифры
+            let formatted = digits.replace(/(.{4})/g, '$1 ').trim();
+
+            // Вставляем обратно в input
+            cardFullInput.value = formatted;
+
+            document.querySelector('.number-of-card').textContent = formatted;
+        });
+
+        const cardInput = document.querySelector('.change-numberOfCart');
+
+        cardInput.addEventListener('input', () => {
+            // Берём только цифры из того, что ввёл пользователь
+            let digits = cardInput.value.replace(/\D/g, '');
+
+            // Ограничиваем до 4 цифр (после двух точек)
+            if (digits.length > 4) digits = digits.slice(0, 4);
+
+            // Формируем отображение: сначала две точки, потом цифры
+            document.querySelector('.number-of-card').textContent = '••' + digits;
+        });
+
+        const phoneInput = document.querySelector('.change-numberOfPhone');
+
+        phoneInput.addEventListener('input', () => {
+            // Берем только цифры
+            let digits = phoneInput.value.replace(/\D/g, '');
+
+            // Ограничиваем длину до 11 цифр (для России)
+            if (digits.length > 11) digits = digits.slice(0, 11);
+
+            // Форматируем
+            let formatted = '+7 ';
+
+            if (digits.length > 1) {
+                formatted += '(' + digits.slice(1, 4);
+            }
+            if (digits.length >= 4) {
+                formatted += ') ' + digits.slice(4, 7);
+            }
+            if (digits.length >= 7) {
+                formatted += '-' + digits.slice(7, 9);
+            }
+            if (digits.length >= 9) {
+                formatted += '-' + digits.slice(9, 11);
+            }
+
+            phoneInput.value = formatted;
+            document.querySelector('.number-of-card').textContent = formatted;
+        });
+
+        function changeOnCart() {
+            const title = document.querySelector('.payment-account')
+            const number = document.querySelector('.number-of-card')
+            const btnToInputPhone = document.querySelector('.change-numberOfPhone')
+            const btnToInputCart = document.querySelector('.change-numberOfCart')
+            const btnToInputCard = document.querySelector('.change-numberOfCard')
+
+            title.textContent = 'Платежный счёт'
+            number.textContent = '••6591'
+            btnToInputPhone.style.display = 'none'
+            btnToInputCart.style.display = 'block'
+            btnToInputCard.style.display = 'none'
+            document.querySelector('.details-title').textContent = 'Счёт списания';
+
+        };
+
+        function changeOnCard() {
+            const title = document.querySelector('.payment-account')
+            const number = document.querySelector('.number-of-card')
+            const btnToInputPhone = document.querySelector('.change-numberOfPhone')
+            const btnToInputCart = document.querySelector('.change-numberOfCart')
+            const btnToInputCard = document.querySelector('.change-numberOfCard')
+
+            title.textContent = 'Номер карты'
+            number.textContent = '2200 2200 2200 2345'
+            number.style.fontSize = '21px'
+            btnToInputPhone.style.display = 'none'
+            btnToInputCart.style.display = 'none'
+            btnToInputCard.style.display = 'block'
+            document.querySelector('.details-title').textContent = 'Счёт получателя';
+        }
+
+        function changeOnPhone() {
+            const title = document.querySelector('.payment-account')
+            const number = document.querySelector('.number-of-card')
+            const btnToInputPhone = document.querySelector('.change-numberOfPhone')
+            const btnToInputCart = document.querySelector('.change-numberOfCart')
+            const btnToInputCard = document.querySelector('.change-numberOfCard')
+
+
+            title.textContent = 'Номер телефона'
+            number.textContent = '+7 (ХХХ) ХХХ-ХХ-ХХ'
+            number.style.fontSize = '21px'
+            btnToInputPhone.style.display = 'block'
+            btnToInputCart.style.display = 'none'
+            btnToInputCard.style.display = 'none'
+            document.querySelector('.details-title').textContent = 'Счёт получателя';
+        };
+
+        const buttons = document.querySelectorAll('.change-CON-item');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Убираем active у всех кнопок
+                buttons.forEach(btn => btn.classList.remove('active'));
+
+                // Добавляем active на нажатую кнопку
+                button.classList.add('active');
+            });
+        });
+
+        function ot200() {
+            document.querySelector('.main-sum').textContent = '200 000 ₽'
+
+            document.querySelector('.info-alert-text').textContent = 'Ошибка «Блокировка Антифрод»'
+            document.querySelector('.info-alert-text').style.fontSize = '22px';
+        }
+
+        function ot1() {
+            document.querySelector('.main-sum').textContent = '1 001 ₽'
+
+            document.querySelector('.info-alert-text').textContent = 'Ошибка «Блокировка Антифрод»'
+            document.querySelector('.info-alert-text').style.fontSize = '22px';
+        }
+
+        function ot3() {
+            document.querySelector('.main-sum').textContent = '3 006 ₽'
+
+            document.querySelector('.info-alert-text').textContent = 'Ошибка «Блокировка Антифрод»'
+            document.querySelector('.info-alert-text').style.fontSize = '22px';
+        }
+
+        function ot8() {
+            document.querySelector('.main-sum').textContent = '8 056 ₽'
+
+            document.querySelector('.info-alert-text').textContent = 'Ошибка «Налог не уплачен»'
+
+            document.querySelector('.info-alert-text').style.fontSize = '22px';
+        }
+
+        function ot23() {
+            document.querySelector('.main-sum').textContent = '23 056 ₽'
+
+            document.querySelector('.info-alert-text').textContent = 'Ошибка «Лицензионный сбор не оплачен»'
+
+            document.querySelector('.info-alert-text').style.fontSize = '21px';
+        }
+
+
+        document.getElementById("copy-btn").addEventListener("click", async () => {
+            const preview = document.getElementById("preview-screen");
+            const exportScreen = document.getElementById("export-screen");
+            const button = document.getElementById("copy-btn");
+
+            // Клонируем интерфейс превью в экспорт
+            exportScreen.innerHTML = preview.innerHTML;
+
+            const canvas = await html2canvas(exportScreen, {
+                width: 588,
+                height: 1280,
+                scale: window.devicePixelRatio,
+                backgroundColor: "#121212"
+            });
+
+            canvas.toBlob(blob => {
+                navigator.clipboard.write([
+                    new ClipboardItem({ "image/png": blob })
+                ]).then(() => {
+                    button.textContent = "Скопировано";
+                    button.classList.add("copied");
+
+                    setTimeout(() => {
+                        button.textContent = "Скопировать";
+                        button.classList.remove("copied");
+                    }, 2000);
+                });
+            });
+        });
+
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, "0");
+            const minutes = String(now.getMinutes()).padStart(2, "0");
+            document.getElementById("time-output").textContent = `${hours}:${minutes}`;
+            document.getElementById("time-output-2").textContent = `${hours}:${minutes}`;
+        }
+
+        let timer = setInterval(updateTime, 1000);
+        updateTime(); // сразу показать при загрузке
+
+
+        function getCurrentDate() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, "0");
+            const month = String(now.getMonth() + 1).padStart(2, "0");
+            const year = now.getFullYear();
+            return `${day}.${month}.${year}`;
+        }
+
+        // Функция для получения актуального времени HH:MM
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, "0");
+            const minutes = String(now.getMinutes()).padStart(2, "0");
+            return `${hours}:${minutes}`;
+        }
+
+        // Обновляем дату и время
+        function updateDateTime() {
+            document.getElementById("date-output").textContent = getCurrentDate();
+            document.getElementById("time-output").textContent = getCurrentTime();
+            document.getElementById("time-output-2").textContent = getCurrentTime();
+        }
+
+        // Таймер для автообновления времени (каждую секунду)
+        let timer1 = setInterval(updateDateTime, 1000);
+        updateDateTime(); // сразу показать при загрузке
+
+        // Инпут и текст
+        const input = document.querySelector('.change-data-time');
+        const text = document.querySelector('.data-and-time-text');
+
+        if (input && text) {
+            // Начальное значение инпута = актуальная дата + время
+            input.value = `${getCurrentDate()} ${getCurrentTime()}`;
+            text.textContent = input.value;
+
+            // При вводе меняем текст и отключаем автообновление
+            input.addEventListener('input', () => {
+                clearInterval(timer1);
+                text.textContent = input.value;
+            });
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>
