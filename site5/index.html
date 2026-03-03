@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Phon</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        /* @font-face {
+            font-family: "SF Pro Display";
+            src: local("SF Pro Display"), local("San Francisco"), local("SFProDisplay");
+        } */
+
+        body {
+
+            margin: 0;
+            height: 100vh;
+            background: #1c1c1c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+            font-family: "Roboto", sans-serif;
+        }
+
+        .phone-wrapper {
+            width: 294px;
+            height: 640px;
+        }
+
+        .phone-screen {
+            width: 588px;
+            height: 1280px;
+            background: white;
+            transform: scale(0.5);
+            transform-origin: top left;
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .another-bank-screen {
+            width: 588px;
+            height: 1280px;
+            background: white;
+            transform: scale(0.5);
+            transform-origin: top left;
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #e0e0e0;
+            transition: .2s;
+        }
+
+        button:hover {
+            background: #d0d0d0;
+        }
+
+        button.copied {
+            background: #0a6305;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logo {
+            width: 280px;
+            margin: 30px 0;
+            margin-bottom: 20px;
+        }
+
+        .screen-up {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sub-title {
+            color: #5a5a5a;
+            font-size: 19px;
+            margin-left: 37px;
+            line-height: 30px;
+            margin-bottom: 2px;
+        }
+
+        .sub-info {
+            color: black;
+            font-size: 23px;
+            font-weight: 400;
+            margin-left: 37px;
+            line-height: 33px;
+        }
+
+        .check-of-operation,
+        .data-and-time {
+            font-size: 23px;
+            font-weight: 400;
+            line-height: 30px;
+            color: #6e6e6e;
+        }
+
+
+        .divider {
+            font-size: 30px;
+            color: #6e6e6e;
+            margin: 0 auto;
+        }
+
+
+        .get-space {
+            margin-bottom: 50px;
+        }
+
+        .under-status {
+            width: 380px;
+            margin: auto auto 40px auto;
+            /* центр + отступ снизу */
+        }
+
+        .sp {
+            margin-bottom: 25px;
+        }
+
+        .container {
+            position: absolute;
+            top: 120px;
+            left: 150px;
+            display: flex;
+            gap: 40px;
+        }
+
+        .editor-panel {
+            width: 260px;
+            padding: 20px;
+            border-radius: 16px;
+            background: linear-gradient(145deg, #ffffff, #f3f3f3);
+            box-shadow:
+                0 15px 35px rgba(0, 0, 0, 0.08),
+                inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+            color: #1a1a1a;
+            font-size: 13px;
+        }
+
+        .editor-panel p {
+            margin: 10px 0 6px;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: #6f6f6f;
+            text-transform: uppercase;
+        }
+
+        .editor-panel input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e2e2;
+            background: #ffffff;
+            color: #111;
+            font-size: 14px;
+            outline: none;
+            transition: all .25s ease;
+        }
+
+        /* hover */
+        .editor-panel input:hover {
+            border-color: #cfcfcf;
+        }
+
+        /* focus */
+        .editor-panel input:focus {
+            border-color: #4c8bf5;
+            box-shadow: 0 0 0 3px rgba(76, 139, 245, 0.15);
+            background: #fff;
+        }
+
+        .editor-panel input::placeholder {
+            color: #a0a0a0;
+        }
+
+        .editor-panel button {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e2e2;
+            background: linear-gradient(145deg, #ffffff, #f2f2f2);
+            color: #1a1a1a;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .25s ease;
+            box-shadow:
+                0 6px 15px rgba(0, 0, 0, 0.06),
+                inset 0 0 0 1px rgba(0, 0, 0, 0.03);
+        }
+
+        /* hover */
+        .editor-panel button:hover {
+            border-color: #cfcfcf;
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.08),
+                inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* active */
+        .editor-panel button:active {
+            transform: translateY(1px);
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.06),
+                inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+
+        .AnLogo {
+            width: 340px;
+            margin-top: 20px;
+        }
+
+        .AnHeaderTitile,
+        .AnData-and-time {
+            margin-top: 0;
+            font-size: 23px;
+            font-weight: 400;
+            line-height: 40px;
+            color: #6e6e6e;
+        }
+
+        .AnSub-title {
+            color: #858585;
+            font-size: 22px;
+            margin-left: 55px;
+            line-height: 30px;
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+
+        .AnSub-info {
+            color: black;
+            font-size: 26px;
+            font-weight: 400;
+            margin-left: 55px;
+            line-height: 33px;
+            font-weight: 500;
+        }
+
+
+        .AnDivider {
+            font-size: 12px;
+            color: #afafaf;
+            margin: 20px auto;
+        }
+
+        .upFromAn {
+            margin-top: 60px;
+        }
+
+        .AnBottom {
+            width: 400px;
+            margin: 60px auto;
+        }
+
+        .switch-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            top: 50px;
+            left: 155px;
+        }
+
+        /* переключающие кнопки */
+
+        .switch-container button {
+            flex: 1;
+            padding: 10px 8px;
+            border-radius: 12px;
+            border: 1px solid #686868;
+            background: rgb(56, 56, 56);
+            color: rgb(196, 196, 196);
+            font-size: 13px;
+            font-weight: 500;
+
+            cursor: pointer;
+            transition: all .25s ease;
+            box-shadow:
+                0 6px 18px rgba(0, 0, 0, 0.05),
+                inset 0 0 0 1px rgba(0, 0, 0, 0.02);
+        }
+
+        /* hover */
+
+        .switch-container button:hover {
+            border-color: #d6d6d6;
+            box-shadow:
+                0 8px 22px rgba(0, 0, 0, 0.08);
+        }
+
+        /* active эффект */
+
+        .switch-container button:active {
+            transform: translateY(1px);
+        }
+
+        /* активная кнопка */
+
+        .switch-container button.active {
+            background: linear-gradient(145deg, #ffffff, #f6f6f6);
+            color: white;
+            border-color: transparent;
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="switch-container">
+        <button id="show-another">В другой банк</button>
+        <button id="show-sber">Клиенту Сбербанка</button>
+
+    </div>
+
+    <div class="container">
+
+        <div class="AnEditorPanel editor-panel">
+            <p> Дата и время</p>
+            <input id="inp-an-time">
+
+            <p> Карта получателя (4 цифры)</p>
+            <input id="inp-an-hiscard" maxlength="4">
+
+            <p> Комиссия</p>
+            <input id="inp-an-com">
+
+            <p> Сумма</p>
+            <input id="inp-an-sum">
+
+            <p> От кого</p>
+            <input id="inp-an-fromname">
+
+            <p> Откуда (4 цифры)</p>
+            <input id="inp-an-fromcard" maxlength="4">
+        </div>
+
+
+
+        <div style="display: none;" class="editor-panel">
+            <p>Дата и время</p>
+            <input id="inp-time">
+
+            <p>Моё ФИО</p>
+            <input id="inp-myfio">
+
+            <p>ФИО получателя</p>
+            <input id="inp-hisfio">
+
+            <p>Моя карта (4 цифры)</p>
+            <input id="inp-mycard" maxlength="4">
+
+            <p>Карта получателя (4 цифры)</p>
+            <input id="inp-hiscard" maxlength="4">
+
+            <p>Сумма перевода</p>
+            <input id="inp-sum">
+
+            <button id="generate-doc" style="width:100%; margin-top:10px;">
+                Сгенерировать номер документа
+            </button>
+        </div>
+    </div>
+
+    <div class="phone-wrapper">
+        <div class="another-bank-screen">
+
+            <div class="screen-up">
+                <img src="./source/logo.png" alt="" class="AnLogo">
+                <span class="AnHeaderTitile">Перевод по номеру карты в другой банк</span>
+                <span id="anTime" class="AnData-and-time">3 марта 2026 12:45:52 мск</span>
+            </div>
+
+
+            <span class="AnSub-title upFromAn">Куда</span>
+            <span id="anHisCard" class="AnSub-info">** 6787</span>
+
+            <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+
+            <span class="AnSub-title">Страна</span>
+            <span class="AnSub-info">Россия</span>
+
+            <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+            <span class="AnSub-title">Сколько</span>
+            <span id="anSum" class="AnSub-info">300 000 Р</span>
+
+            <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+            <span class="AnSub-title">Комиссия</span>
+            <span id="anCom" class="AnSub-info">3 000 Р</span>
+
+            <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+            <span class="AnSub-title">Списано</span>
+            <span id="AnSum" class="AnSub-info">303 000 Р</span>
+
+            <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+
+            <span class="AnSub-title">От кого</span>
+            <span id="anFromName" class="AnSub-info">Мария Александровна Б.</span>
+
+            <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+
+            <span class="AnSub-title">Откуда</span>
+            <span id="anFromCard" class="AnSub-info">** 6787</span>
+
+            <img class="AnBottom" src="./source/under.png" alt="">
+
+        </div>
+        <div style="display: none;" class="phone-screen" id="phone-screen">
+
+            <div class="screen-up">
+                <img src="./source/logo.png" alt="" class="logo">
+                <span class="check-of-operation ">Чек по операции</span>
+                <span id="data-and-time" class="data-and-time">01 марта 2026 18:15:32 (МСК)</span>
+            </div>
+
+
+
+
+            <div class="divider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+            <span class="sub-title">Операция</span>
+            <span class="sub-info">Перевод клиенту СберБанка</span>
+            <span class="sub-title">ФИО получателя</span>
+            <span id="hisFIO" class="sub-info">Евгений Александрович М.</span>
+            <span class="sub-title">Номер карты получателя</span>
+            <span id="hisCard" class="sub-info get-space">**** 2909</span>
+
+            <span class="sub-title">ФИО отправителя</span>
+            <span id="myFIO" class="sub-info">Полина Сергеевна З.</span>
+            <span class="sub-title">Счёт отправителя</span>
+            <span id="myCard" class="sub-info">**** 5236</span>
+            <span class="sub-title">Сумма перевода</span>
+            <span id="SumOfTrans" class="sub-info">200 000,00 ₽</span>
+            <span class="sub-title">Комиссия</span>
+            <span class="sub-info get-space">0,00 ₽</span>
+
+            <span class="sub-title">Номер документа</span>
+            <span id="docNumber" class="sub-info">22253548583779982</span>
+            <span class="sub-title">Код авторизации</span>
+            <span class="sub-info sp">624181</span>
+
+            <div class="divider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+
+            <span class="sub-title ">Дополнительная информация</span>
+            <span class="sub-info">Если вы отправили деньги не тому человеку, обратитесь к получателю
+                перевода. <br> Деньги может вернуть только получатель</span>
+
+
+            <img src="./source/under.png" alt="" class="under-status">
+        </div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+        <button id="copy-btn">Скопировать</button>
+        <button id="pdf-btn">Скачать PDF</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+
+        window.addEventListener("DOMContentLoaded", () => {
+
+            const anotherBtn = document.getElementById("show-another");
+
+            anotherBtn.click(); // симулируем нажатие
+
+        });
+
+        const sberPanel = document.querySelectorAll(".editor-panel")[1];
+        const anPanel = document.querySelectorAll(".editor-panel")[0];
+
+        document.getElementById("show-sber").addEventListener("click", () => {
+            sberScreen.style.display = "flex";
+            anotherScreen.style.display = "none";
+
+            sberPanel.style.display = "block";
+            anPanel.style.display = "none";
+        });
+
+        document.getElementById("show-another").addEventListener("click", () => {
+            sberScreen.style.display = "none";
+            anotherScreen.style.display = "flex";
+
+            sberPanel.style.display = "none";
+            anPanel.style.display = "block";
+        });
+
+        const anElements = {
+            time: document.getElementById("anTime"),
+            hisCard: document.getElementById("anHisCard"),
+            sum: document.getElementById("anSum"),
+            com: document.getElementById("anCom"),
+            fromName: document.getElementById("anFromName"),
+            fromCard: document.getElementById("anFromCard")
+        };
+
+        const anInputs = {
+            time: document.getElementById("inp-an-time"),
+            hisCard: document.getElementById("inp-an-hiscard"),
+            sum: document.getElementById("inp-an-sum"),
+            com: document.getElementById("inp-an-com"),
+            fromName: document.getElementById("inp-an-fromname"),
+            fromCard: document.getElementById("inp-an-fromcard")
+        };
+
+        /* начальные значения */
+        anInputs.time.value = anElements.time.textContent;
+        anInputs.hisCard.value = "6787";
+        anInputs.sum.value = "300000";
+        anInputs.com.value = "3000";
+        anInputs.fromName.value = anElements.fromName.textContent;
+        anInputs.fromCard.value = "6787";
+
+        /* обновление */
+
+        anInputs.time.addEventListener("input", e => {
+            anElements.time.textContent = e.target.value;
+        });
+
+        anInputs.hisCard.addEventListener("input", e => {
+            let val = e.target.value.replace(/\D/g, '').slice(0, 4);
+            anElements.hisCard.textContent = "** " + val;
+        });
+
+        anInputs.sum.addEventListener("input", e => {
+            let val = e.target.value.replace(/\D/g, '');
+            anElements.sum.textContent = numberWithSpaces(val) + " Р";
+        });
+
+        anInputs.com.addEventListener("input", e => {
+            let val = e.target.value.replace(/\D/g, '');
+            anElements.com.textContent = numberWithSpaces(val) + " Р";
+        });
+
+        anInputs.fromName.addEventListener("input", e => {
+            let val = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '');
+            anElements.fromName.textContent = val;
+        });
+
+        anInputs.fromCard.addEventListener("input", e => {
+            let val = e.target.value.replace(/\D/g, '').slice(0, 4);
+            anElements.fromCard.textContent = "** " + val;
+        });
+
+        const sberScreen = document.getElementById("phone-screen");
+        const anotherScreen = document.querySelector(".another-bank-screen");
+
+        document.getElementById("show-sber").addEventListener("click", () => {
+            sberScreen.style.display = "flex";
+            anotherScreen.style.display = "none";
+        });
+
+        document.getElementById("show-another").addEventListener("click", () => {
+            sberScreen.style.display = "none";
+            anotherScreen.style.display = "flex";
+        });
+
+        const docSpan = document.getElementById("docNumber");
+        const generateBtn = document.getElementById("generate-doc");
+
+        function generateRandomNumber(length = 17) {
+            let result = "";
+            for (let i = 0; i < length; i++) {
+                result += Math.floor(Math.random() * 10);
+            }
+            return result;
+        }
+
+        // при загрузке страницы
+        docSpan.textContent = generateRandomNumber();
+
+        // по нажатию кнопки
+        generateBtn.addEventListener("click", () => {
+            docSpan.textContent = generateRandomNumber();
+        });
+
+        const elements = {
+            time: document.getElementById("data-and-time"),
+            myFIO: document.getElementById("myFIO"),
+            hisFIO: document.getElementById("hisFIO"),
+            myCard: document.getElementById("myCard"),
+            hisCard: document.getElementById("hisCard"),
+            sum: document.getElementById("SumOfTrans")
+        };
+
+        const inputs = {
+            time: document.getElementById("inp-time"),
+            myFIO: document.getElementById("inp-myfio"),
+            hisFIO: document.getElementById("inp-hisfio"),
+            myCard: document.getElementById("inp-mycard"),
+            hisCard: document.getElementById("inp-hiscard"),
+            sum: document.getElementById("inp-sum")
+        };
+
+        /* ===== INITIAL VALUES ===== */
+
+        inputs.time.value = elements.time.textContent;
+        inputs.myFIO.value = elements.myFIO.textContent;
+        inputs.hisFIO.value = elements.hisFIO.textContent;
+        inputs.myCard.value = "2909";
+        inputs.hisCard.value = "5236";
+        inputs.sum.value = "200000";
+
+        /* ===== LIVE UPDATE ===== */
+
+        inputs.time.addEventListener("input", e => {
+            elements.time.textContent = e.target.value;
+        });
+
+        inputs.myFIO.addEventListener("input", e => {
+            let val = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '');
+            elements.myFIO.textContent = val;
+        });
+
+        inputs.hisFIO.addEventListener("input", e => {
+            let val = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '');
+            elements.hisFIO.textContent = val;
+        });
+
+        inputs.myCard.addEventListener("input", e => {
+            let val = e.target.value.replace(/\D/g, '').slice(0, 4);
+            elements.myCard.textContent = "**** " + val;
+        });
+
+        inputs.hisCard.addEventListener("input", e => {
+            let val = e.target.value.replace(/\D/g, '').slice(0, 4);
+            elements.hisCard.textContent = "**** " + val;
+        });
+
+        inputs.sum.addEventListener("input", e => {
+            let val = e.target.value.replace(/\D/g, '');
+            elements.sum.textContent = numberWithSpaces(val) + " ₽";
+        });
+
+        /* ===== FORMAT NUMBER ===== */
+
+        function numberWithSpaces(x) {
+            return x.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+
+        /* ===== COPY IMAGE ===== */
+
+        document.getElementById("copy-btn").addEventListener("click", async () => {
+            const screen = sberScreen.style.display !== "none"
+                ? sberScreen
+                : anotherScreen;
+            const button = document.getElementById("copy-btn");
+
+            // 🔥 временно убираем scale
+            screen.style.transform = "scale(1)";
+            screen.style.borderRadius = "0px";
+
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            const canvas = await html2canvas(screen, {
+                width: 588,
+                height: 1280,
+                scale: 1,
+                backgroundColor: "#ffffff"
+            });
+
+            // возвращаем обратно
+            screen.style.transform = "scale(0.5)";
+            screen.style.borderRadius = "30px";
+
+            canvas.toBlob(async (blob) => {
+                try {
+                    await navigator.clipboard.write([
+                        new ClipboardItem({ "image/png": blob })
+                    ]);
+
+                    button.textContent = "Скопировано";
+                    button.classList.add("copied");
+
+                    setTimeout(() => {
+                        button.textContent = "Скопировать";
+                        button.classList.remove("copied");
+                    }, 2000);
+
+                } catch (err) {
+                    alert("Браузер не поддерживает копирование изображения.");
+                }
+            });
+        });
+
+
+        /* ===== PDF SAVE FUNCTION ===== */
+
+        async function savePDF() {
+            const screen = sberScreen.style.display !== "none"
+                ? sberScreen
+                : anotherScreen;
+
+            // 🔥 временно убираем scale
+            screen.style.transform = "scale(1)";
+            screen.style.borderRadius = "0px";
+
+            await new Promise(resolve => setTimeout(resolve, 50)); // даём браузеру обновиться
+
+            const canvas = await html2canvas(screen, {
+                width: 588,
+                height: 1280,
+                scale: 1,
+                backgroundColor: "#ffffff"
+            });
+
+            // возвращаем обратно визуальный scale
+            screen.style.transform = "scale(0.5)";
+            screen.style.borderRadius = "30px";
+
+            const imgData = canvas.toDataURL("image/jpeg", 0.8);
+
+            const { jsPDF } = window.jspdf;
+
+            const pdf = new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: [106, 267] // твой желаемый размер
+            });
+
+            const pageWidth = 106; // мм
+            const imgRatio = canvas.height / canvas.width;
+            const imgHeight = pageWidth * imgRatio;
+
+            pdf.addImage(
+                imgData,
+                "JPEG",
+                0,
+                0,
+                pageWidth,
+                imgHeight
+            );
+
+            const dateElement = sberScreen.style.display !== "none"
+                ? document.getElementById("data-and-time")
+                : document.getElementById("anTime");
+
+            const dateText = dateElement.textContent;
+
+            // пример: "01 марта 2026 18:15:32 (МСК)"
+            const parts = dateText.split(" ");
+            const day = parts[0];
+            const monthRus = parts[1];
+            const year = parts[2];
+
+            // перевод месяца в номер
+            const months = {
+                "января": "01",
+                "февраля": "02",
+                "марта": "03",
+                "апреля": "04",
+                "мая": "05",
+                "июня": "06",
+                "июля": "07",
+                "августа": "08",
+                "сентября": "09",
+                "октября": "10",
+                "ноября": "11",
+                "декабря": "12"
+            };
+
+            const month = months[monthRus] || "01";
+
+            // формат YYYY-MM-DD
+            const dateStr = `${year}-${month}-${day}`;
+
+            const randomNum = Math.floor(100000 + Math.random() * 900000);
+            const fileName = `Документ-${dateStr}-${randomNum}.pdf`;
+
+            pdf.save(fileName);
+        }
+
+        document.getElementById("pdf-btn").addEventListener("click", savePDF);
+
+        const switchButtons = document.querySelectorAll(".switch-container button");
+
+        function setActiveButton(btn) {
+            switchButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+        }
+
+        document.getElementById("show-sber").addEventListener("click", e => {
+            setActiveButton(e.target);
+
+            sberScreen.style.display = "flex";
+            anotherScreen.style.display = "none";
+
+            document.querySelectorAll(".editor-panel").forEach(p => p.style.display = "none");
+            document.querySelectorAll(".editor-panel")[1].style.display = "block";
+        });
+
+        document.getElementById("show-another").addEventListener("click", e => {
+            setActiveButton(e.target);
+
+            sberScreen.style.display = "none";
+            anotherScreen.style.display = "flex";
+
+            document.querySelectorAll(".editor-panel").forEach(p => p.style.display = "none");
+            document.querySelectorAll(".editor-panel")[0].style.display = "block";
+        });
+
+    </script>
+
+</body>
+
+</html>
