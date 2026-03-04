@@ -492,6 +492,8 @@
 
     <script>
 
+        
+
         window.addEventListener("DOMContentLoaded", () => {
 
             const anotherBtn = document.getElementById("show-another");
@@ -499,6 +501,15 @@
             anotherBtn.click(); // симулируем нажатие
 
         });
+
+        function updateAnotherTotal() {
+            const sum = parseInt(anInputs.sum.value.replace(/\D/g, '')) || 0;
+            const com = parseInt(anInputs.com.value.replace(/\D/g, '')) || 0;
+
+            const total = sum + com;
+
+            anElements.total.textContent = numberWithSpaces(total.toString()) + " Р";
+        }
 
         const sberPanel = document.querySelectorAll(".editor-panel")[1];
         const anPanel = document.querySelectorAll(".editor-panel")[0];
@@ -525,7 +536,8 @@
             sum: document.getElementById("anSum"),
             com: document.getElementById("anCom"),
             fromName: document.getElementById("anFromName"),
-            fromCard: document.getElementById("anFromCard")
+            fromCard: document.getElementById("anFromCard"),
+            total: document.getElementById("AnSum")
         };
 
         const anInputs = {
@@ -559,11 +571,13 @@
         anInputs.sum.addEventListener("input", e => {
             let val = e.target.value.replace(/\D/g, '');
             anElements.sum.textContent = numberWithSpaces(val) + " Р";
+            updateAnotherTotal();
         });
 
         anInputs.com.addEventListener("input", e => {
             let val = e.target.value.replace(/\D/g, '');
             anElements.com.textContent = numberWithSpaces(val) + " Р";
+            updateAnotherTotal();
         });
 
         anInputs.fromName.addEventListener("input", e => {
@@ -832,6 +846,8 @@
             document.querySelectorAll(".editor-panel").forEach(p => p.style.display = "none");
             document.querySelectorAll(".editor-panel")[0].style.display = "block";
         });
+
+        updateAnotherTotal();
 
     </script>
 
