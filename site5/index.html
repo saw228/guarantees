@@ -492,7 +492,7 @@
 
     <script>
 
-        
+
 
         window.addEventListener("DOMContentLoaded", () => {
 
@@ -581,8 +581,7 @@
         });
 
         anInputs.fromName.addEventListener("input", e => {
-            let val = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '');
-            anElements.fromName.textContent = val;
+            anElements.fromName.textContent = e.target.value;
         });
 
         anInputs.fromCard.addEventListener("input", e => {
@@ -656,13 +655,11 @@
         });
 
         inputs.myFIO.addEventListener("input", e => {
-            let val = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '');
-            elements.myFIO.textContent = val;
+            elements.myFIO.textContent = e.target.value;
         });
 
         inputs.hisFIO.addEventListener("input", e => {
-            let val = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '');
-            elements.hisFIO.textContent = val;
+            elements.hisFIO.textContent = e.target.value;
         });
 
         inputs.myCard.addEventListener("input", e => {
