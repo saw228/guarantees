@@ -328,6 +328,41 @@
             color: black;
             font-weight: bold;
         }
+
+        .popup {
+            position: absolute;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+
+            opacity: 0;
+            transform: translateY(-10px) scale(0.98);
+            pointer-events: none;
+
+            transition: all 0.25s ease;
+
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .popup.show {
+            opacity: 1;
+            transform: translateY(5px) scale(1);
+            pointer-events: auto;
+        }
+
+        .popup div {
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.15s;
+        }
+
+        .popup div:hover {
+            background: #f3f3f3;
+        }
     </style>
 
 </head>
@@ -339,6 +374,8 @@
         <button id="show-sber">Клиенту Сбербанка</button>
 
     </div>
+
+    <div id="name-popup" class="popup"></div>
 
     <div class="container">
 
@@ -491,6 +528,58 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
+
+        const names = ["Полина Сергеевна З.","Полина Александровна Ч.", "Мария Александровна Б.", "Анна Александровна Ж."];
+
+        const popup = document.getElementById("name-popup");
+
+        const inputsList = [
+            document.getElementById("inp-myfio"),
+            document.getElementById("inp-an-fromname")
+        ];
+
+        let activeInput = null;
+
+        function showPopup(input) {
+
+            activeInput = input;
+            popup.innerHTML = "";
+
+            names.forEach(name => {
+
+                const option = document.createElement("div");
+                option.textContent = name;
+
+                option.onclick = () => {
+
+                    activeInput.value = name;
+
+                    activeInput.dispatchEvent(new Event("input"));
+
+                    popup.classList.remove("show");
+                };
+
+                popup.appendChild(option);
+            });
+
+            const rect = input.getBoundingClientRect();
+
+            popup.style.left = rect.left + "px";
+            popup.style.top = rect.bottom + window.scrollY + "px";
+            popup.style.width = rect.width + "px";
+
+            popup.classList.add("show");
+        }
+
+        inputsList.forEach(input => {
+            input.addEventListener("click", () => showPopup(input));
+        });
+
+        document.addEventListener("click", e => {
+            if (!popup.contains(e.target) && !inputsList.includes(e.target)) {
+                popup.classList.remove("show");
+            }
+        });
 
 
 
