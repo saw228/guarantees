@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&display=swap">
+  <title>Layout</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    @font-face {
+      font-family: "SF Pro Text";
+      src: url("./fonts/SFProText-Regular.ttf") format("truetype");
+      font-weight: 400;
+    }
+
+    @font-face {
+      font-family: "SF Pro Text";
+      src: url("./fonts/SFProText-Medium.ttf") format("truetype");
+      font-weight: 500;
+    }
+
+    body {
+      background: #1c1c1c;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 40px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .screens-row {
+      display: flex;
+      gap: 40px;
+    }
+
+    .phone-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .screen-container {
+      width: 294px;
+      height: 640px;
+      overflow: hidden;
+      border-radius: 30px;
+    }
+
+    .phone-screen {
+      width: 588px;
+      height: 1280px;
+      background: #121212;
+      transform: scale(0.5);
+      transform-origin: top left;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #e0e0e0;
+    }
+
+    button:hover {
+      background: #d0d0d0;
+    }
+
+    button.copied {
+      background: #0a6305;
+      color: white;
+    }
+
+    .phone-header {
+      padding-left: 35px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-right: 15px;
+    }
+
+    .phone-header-time {
+      color: white;
+      font-size: 25px;
+      font-family: "SF Pro Text", -apple-system, sans-serif;
+      font-weight: 500;
+    }
+
+    .phone-header-charge {
+      width: 120px;
+      margin-right: 10px;
+      padding-top: 5px;
+    }
+
+    .tranfer-succes {
+      width: 230px;
+      margin-left: 50%;
+      transform: translate(-50%);
+      margin-top: 200px;
+    }
+
+    .transfer-sum {
+      display: block;
+      color: white;
+      font-size: 47px;
+      margin-left: 190px;
+      font-family: "Inter Tight", sans-serif;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .transfer-succes-text {
+      display: block;
+      color: #fafafa;
+      font-size: 25px;
+      margin-left: 185px;
+      margin-top: 20px;
+      font-family: "SF Pro Text", -apple-system, sans-serif;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+
+    .save-kvit {
+      margin-top: 45px;
+      width: 490px;
+      margin-left: 17px;
+    }
+
+    .transfer-info-block {
+      height: 100%;
+      background-color: #1e1e1e;
+      width: 100%;
+      border-radius: 20px;
+      padding-top: 10px;
+    }
+
+    .drag-handle {
+      width: 52px;
+      height: 7px;
+      background: #848488;
+      border-radius: 100px;
+      margin-left: 270px;
+      opacity: 0.6;
+    }
+
+    .transfer-willbe-get {
+      display: block;
+      color: white;
+      font-size: 25px;
+      margin-top: 30px;
+      margin-bottom: 5px;
+      padding-left: 25px;
+      width: 500px;
+    }
+
+    .few-days {
+      display: block;
+      color: #939393;
+      font-size: 22.5px;
+      padding-left: 25px;
+      width: 580px;
+    }
+
+    .info-block-divider {
+      position: relative;
+      width: 100%;
+      height: 12px;
+      background-color: #2a2a2a;
+      margin-top: 20px;
+    }
+
+    .details-text {
+      font-weight: 500;
+      color: white;
+      font-size: 32px;
+      margin: 15px 0;
+      padding-left: 25px;
+    }
+
+    .receiver {
+      margin-top: 30px;
+      display: flex;
+    }
+
+    .receiver-image {
+      width: 90px;
+      padding-left: 25px;
+    }
+
+    .receiver-block {
+      padding-left: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .receiver-block-text {
+      color: #848488;
+      font-size: 22.5px;
+    }
+
+    .receiver-block-card {
+      margin-top: 5px;
+      color: #d9d9d9;
+      font-size: 24px;
+      font-weight: 500;
+    }
+
+    .back {
+      display: block;
+      color: white;
+      font-size: 25px;
+      background-color: #0e8f2a;
+      width: 90%;
+      height: 73px;
+      margin-left: 35px;
+      margin-top: 40px;
+      padding-top: 15px;
+      text-align: center;
+      border-radius: 20px;
+    }
+
+    .transfer-info-block-2 {
+      margin-top: 100px;
+    }
+
+    .bank-of-card {
+      color: #999999;
+      font-size: 22px;
+      margin-left: 100px;
+      margin-bottom: 40px;
+    }
+
+    .mini-divider {
+      display: block;
+      color: rgb(37, 37, 37);
+      font-size: 25px;
+    }
+
+    .mini-2 {
+      margin-left: 100px;
+    }
+
+    .mini-1 {
+      margin-left: 25px;
+      margin: 10px;
+    }
+
+    .title {
+      padding-left: 25px;
+      color: #999999;
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .sub-title {
+      padding-left: 25px;
+      color: #d9d9d9;
+      font-weight: 500;
+      font-size: 25px;
+    }
+
+    .comission {
+      color: #df490c;
+      font-size: 22px;
+      padding-left: 25px;
+      margin-top: 0;
+    }
+
+    .titile-data {
+      margin-top: 20px;
+    }
+
+    .mini-12 {
+      margin-bottom: 0;
+    }
+
+    .text-btn.active {
+      background: #0a6305;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="text-panel"
+    style="position:fixed; top:400px; right:20px; width:320px; background:#1e1e1e; border-radius:15px; padding:20px; color:#fafafa; font-family:'Inter Tight', sans-serif; box-shadow:0 0 20px rgba(0,0,0,0.5); z-index:9999;">
+    <h3 style="margin-bottom:15px; text-align:center;">Текстовые шаблоны</h3>
+
+    <div style="display:flex; gap:5px; flex-wrap:wrap; margin-bottom:15px;">
+      <button class="text-btn"
+        data-text="Пойми правильно: с моей карты уже списано 200 тысяч рублей, и эти средства направлены на твой счёт. Сейчас перевод находится в обработке между твоим счётом и счётом брокера. Но банк удерживает его до момента уплаты налога — это стандартная процедура, как для всех победителей. Я свои деньги назад вернуть уже не могу. Всё зависит только от тебя: как только налог будет оплачен, средства незамедлительно поступят тебе">Налог</button>
+      <button class="text-btn"
+        data-text="Пойми правильно: с моей карты уже списано 200 тысяч рублей, и эти средства направлены на твой счёт. Сейчас перевод находится в обработке между твоим счётом и счётом брокера. Но банк удерживает его до момента уплаты лицензионного сбора — это стандартная процедура, как для всех победителей. Я свои деньги назад вернуть уже не могу. Всё зависит только от тебя: как только лицензия будет оплачена, средства незамедлительно поступят тебе">Лицензия</button>
+      <button class="text-btn"
+        data-text="Пойми правильно: с моей карты уже списано 200 тысяч рублей, и эти средства направлены на твой счёт. Сейчас перевод находится в обработке между твоим счётом и счётом брокера. Но банк удерживает его до момента уплаты 115-ФЗ проверки — это стандартная процедура, как для всех победителей. Я свои деньги назад вернуть уже не могу. Всё зависит только от тебя: как только проверка будет пройдена, средства незамедлительно поступят тебе">115-ФЗ</button>
+      <button class="text-btn"
+        data-text="Пойми правильно: с моей карты уже списано 200 тысяч рублей, и эти средства направлены на твой счёт. Сейчас перевод находится в обработке между твоим счётом и счётом брокера. Но банк удерживает его до момента уплаты пошлины — это стандартная процедура, как для всех победителей. Я свои деньги назад вернуть уже не могу. Всё зависит только от тебя: как только пошлина будет оплачена, средства незамедлительно поступят тебе">Таможенная
+        пошлина</button>
+    </div>
+
+    <textarea id="text-input"
+      style="width:100%; height:100px; border-radius:6px; border:none; padding:5px; background:#2a2a2a; color:white; resize:none;"></textarea>
+
+    <button id="copy-text-btn"
+      style="margin-top:10px; width:100%; padding:10px; border-radius:6px; border:none; background:#e0e0e0; cursor:pointer;">Скопировать
+      текст</button>
+  </div>
+
+  <!-- Панель редактирования -->
+  <div id="editor-panel"
+    style="position:fixed; top:20px; right:20px; width:320px; background:#1e1e1e; border-radius:15px; padding:20px; color:#fafafa; font-family:'Inter Tight', sans-serif; box-shadow:0 0 20px rgba(0,0,0,0.5); z-index:9999;">
+    <h3 style="margin-bottom:15px; text-align:center;">Редактор </h3>
+    <label>Платежный счет:</label>
+    <input maxlength="4" pattern="\d{0,4}" inputmode="numeric" id="from-input" type="text" value="8304"
+      autocomplete="off"
+      style="width:100%; margin-bottom:10px; border-radius:6px; border:none; padding:5px; background:#2a2a2a; color:white;">
+
+    <label>Получатель:</label>
+    <input maxlength="4" pattern="\d{0,4}" inputmode="numeric" id="to-input" type="text" autocomplete="off"
+      style="width:100%; margin-bottom:10px; border-radius:6px; border:none; padding:5px; background:#2a2a2a; color:white;">
+
+    <label>Дата и время:</label>
+    <input id="data-input" type="text" value="05.04.2026 12:00:32" autocomplete="off"
+      style="width:100%; margin-bottom:10px; border-radius:6px; border:none; padding:5px; background:#2a2a2a; color:white;">
+
+    <label>Сумма перевода:</label>
+    <input id="sum-input" type="number" value="200000" autocomplete="off"
+      style="width:100%; margin-bottom:10px; border-radius:6px; border:none; padding:5px; background:#2a2a2a; color:white;">
+
+    <label>Банк:</label>
+    <input id="bank-input" type="text" value="Сбербанк" autocomplete="off"
+      style="width:100%; margin-bottom:10px; border-radius:6px; border:none; padding:5px; background:#2a2a2a; color:white;">
+
+    <div id="bank-list" style="
+  position: absolute;
+  background: #2a2a2a;
+  color: white;
+  border-radius: 6px;
+  width: 290px;
+  max-height: 150px;
+  overflow-y: auto;
+  display: none;
+  z-index: 1000;
+"></div>
+  </div>
+
+  <div class="screens-row">
+    <!-- Экран 1 -->
+    <div class="phone-wrapper">
+      <div class="screen-container">
+        <div class="phone-screen">
+          <div class="phone-header">
+            <span class="phone-header-time">12:00</span>
+            <img class="phone-header-charge" src="./source/photo_2026-04-02_22-11-46.jpg" alt="">
+          </div>
+
+          <img src="./source/perevod-proveden.jpg" alt="" class="tranfer-succes">
+
+          <span class="transfer-sum" id="sum-screen1">200 000 ₽</span>
+          <span class="transfer-succes-text">Перевод выполнен</span>
+          <img class="save-kvit" src="./source/Image.png" alt="">
+
+          <div class="transfer-info-block">
+            <div class="drag-handle"></div>
+            <span class="transfer-willbe-get">Перевод будет зачислен в течение нескольких минут</span>
+            <span class="few-days">В редких случаях срок зачисления увеличивается до нескольких дней</span>
+            <div class="info-block-divider"></div>
+            <div class="details-text">Подробности</div>
+
+            <div class="receiver">
+              <img class="receiver-image" src="./source/rus.png" alt="">
+              <div class="receiver-block">
+                <span class="receiver-block-text">Номер карты получателя</span>
+                <span class="receiver-block-card" id="to-screen1">••&#8202;4543</span>
+              </div>
+            </div>
+
+            <span class="back">Вернуться на главный</span>
+          </div>
+        </div>
+      </div>
+      <button class="copy-btn">Скопировать экран 1</button>
+    </div>
+
+    <!-- Экран 2 -->
+    <div class="phone-wrapper">
+      <div class="screen-container">
+        <div class="phone-screen">
+          <div class="phone-header">
+            <span class="phone-header-time">12:00</span>
+            <img class="phone-header-charge" src="./source/photo_2026-04-02_22-11-46.jpg" alt="">
+          </div>
+
+          <div class="transfer-info-block transfer-info-block-2">
+            <div class="drag-handle"></div>
+            <span class="transfer-willbe-get">Перевод будет зачислен в течение нескольких минут</span>
+            <span class="few-days">В редких случаях срок зачисления увеличивается до нескольких дней</span>
+            <div class="info-block-divider"></div>
+            <div class="details-text">Подробности</div>
+
+            <div class="receiver">
+              <img class="receiver-image" src="./source/rus.png" alt="">
+              <div class="receiver-block">
+                <span class="receiver-block-text">Номер карты получателя</span>
+                <span class="receiver-block-card" id="to-screen2">••&#8202;4543</span>
+              </div>
+            </div>
+
+            <div class="mini-divider mini-2">--------------------------------------------</div>
+            <div class="bank-of-card" id="bank-screen2">Сбербанк</div>
+
+            <div class="title">Откуда</div>
+            <div id="from-display" class="sub-title">Платежный счёт, ••&#8202;4543</div>
+
+            <div class="mini-divider mini-1">----------------------------------------------------</div>
+
+            <div class="title">Сумма перевода</div>
+            <div id="sum-display" class="sub-title">200 000 Р</div>
+
+            <div class="mini-divider mini-1">----------------------------------------------------</div>
+            <div class="title">Списано</div>
+            <div id="sum-with-com" class="sub-title">202 000 Р</div>
+            <div class="mini-divider mini-1 mini-12">----------------------------------------------------</div>
+            <div class="comission">Комиссия 2 000 Р</div>
+
+            <div class="title titile-data">Дата и время перевода</div>
+            <div id="date-display" class="sub-title">05.04.2026 12:00:32</div>
+
+            <span class="back">Вернуться на главный</span>
+          </div>
+        </div>
+      </div>
+      <button class="copy-btn">Скопировать экран 2</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    const buttons = document.querySelectorAll(".copy-btn");
+
+    buttons.forEach((btn, i) => {
+      btn.addEventListener("click", async () => {
+        const screen = btn.parentElement.querySelector(".phone-screen");
+        screen.style.transform = "scale(1)";
+        screen.style.borderRadius = "0px";
+
+        await new Promise(r => setTimeout(r, 50));
+
+        const canvas = await html2canvas(screen, { width: 588, height: 1280, scale: 1, backgroundColor: "#ffffff" });
+
+        screen.style.transform = "scale(0.5)";
+        screen.style.borderRadius = "30px";
+
+        canvas.toBlob(async blob => {
+          try {
+            await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+            btn.textContent = "Скопировано";
+            btn.classList.add("copied");
+            setTimeout(() => {
+              btn.textContent = i === 0 ? "Скопировать экран 1" : "Скопировать экран 2";
+              btn.classList.remove("copied");
+            }, 2000);
+          } catch { alert("Браузер не поддерживает копирование"); }
+        });
+      });
+    });
+
+    const fromInput = document.getElementById('from-input');
+    const toInput = document.getElementById('to-input');
+    const dataInput = document.getElementById('data-input');
+    const sumInput = document.getElementById('sum-input');
+    const bankInput = document.getElementById('bank-input');
+
+    const fromDisplay = document.getElementById('from-display');
+    const toScreen1 = document.getElementById('to-screen1');
+    const toScreen2 = document.getElementById('to-screen2');
+    const bankScreen2 = document.getElementById('bank-screen2');
+    const sumDisplay = document.getElementById('sum-display');
+    const sumWithComDisplay = document.getElementById('sum-with-com');
+    const comDisplay = document.querySelector('.comission');
+    const dateDisplay = document.getElementById('date-display');
+    const sumScreen1 = document.getElementById('sum-screen1');
+
+    function formatFrom(value) {
+      const digits = value.replace(/\D/g, '').slice(-4);
+      const last4 = digits.padStart(4, '0');
+      return `Платежный счёт, ••\u2009${last4}`;
+    }
+
+    function formatTo(value) {
+      const digits = value.replace(/\D/g, '').slice(0, 4);
+      const last4 = digits.padStart(4, '0');
+      return `••\u2009${last4}`;
+    }
+
+    function updateAll() {
+      fromInput.value = fromInput.value.replace(/\D/g, '').slice(0, 16);
+      toInput.value = toInput.value.replace(/\D/g, '').slice(0, 16);
+
+      const sumVal = parseFloat(sumInput.value) || 0;
+
+      let com = Math.round(sumVal * 0.01);
+
+      // если Сбербанк → комиссия 0
+      if (bankInput.value.trim().toLowerCase() === 'сбербанк') {
+        com = 0;
+      }
+
+      const sumWCom = sumVal + com;
+
+      toScreen1.textContent = formatTo(toInput.value);
+      toScreen2.textContent = formatTo(toInput.value);
+      fromDisplay.textContent = formatFrom(fromInput.value);
+
+      sumDisplay.textContent = sumVal.toLocaleString('ru-RU') + ' Р';
+      sumWithComDisplay.textContent = sumWCom.toLocaleString('ru-RU') + ' Р';
+      comDisplay.textContent = `Комиссия ${com.toLocaleString('ru-RU')} Р`;
+      dateDisplay.textContent = dataInput.value;
+      bankScreen2.textContent = bankInput.value;
+      sumScreen1.textContent = sumVal.toLocaleString('ru-RU') + ' ₽';
+    }
+
+    [fromInput, toInput, dataInput, sumInput, bankInput].forEach(input => {
+      input.addEventListener('input', updateAll);
+    });
+
+    updateAll();
+
+    function updateClock() {
+      const timeElements = document.querySelectorAll('.phone-header-time');
+      const now = new Date();
+
+      // формируем строку типа "12:34"
+      let hours = now.getHours().toString().padStart(2, '0');
+      let minutes = now.getMinutes().toString().padStart(2, '0');
+      const timeString = `${hours}:${minutes}`;
+
+      // обновляем все элементы
+      timeElements.forEach(el => el.textContent = timeString);
+    }
+
+    // запускаем сразу и потом каждую секунду
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    const textButtons = document.querySelectorAll('.text-btn');
+    const textInput = document.getElementById('text-input');
+    const copyTextBtn = document.getElementById('copy-text-btn');
+
+    textButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // вставляем текст
+        textInput.value = btn.getAttribute('data-text');
+
+        // делаем активной эту кнопку и убираем активность с остальных
+        textButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Кнопки вставляют текст в textarea
+    textButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        textInput.value = btn.getAttribute('data-text');
+      });
+    });
+
+    // Копировать текст в буфер
+    copyTextBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(textInput.value);
+        copyTextBtn.textContent = 'Скопировано';
+        copyTextBtn.style.background = '#0a6305';
+        copyTextBtn.style.color = 'white';
+        setTimeout(() => {
+          copyTextBtn.textContent = 'Скопировать текст';
+          copyTextBtn.style.background = '#e0e0e0';
+          copyTextBtn.style.color = 'black';
+        }, 2000);
+      } catch {
+        alert('Браузер не поддерживает копирование');
+      }
+    });
+
+    const bankListDiv = document.getElementById('bank-list');
+
+    const banks = [
+      "Сбербанк",
+      "Т-Банк",
+      "Альфа Банк",
+      "ВТБ Банк",
+      "Озон Банк",
+      "Райффаззен банк",
+      "ОТП Банк",
+      "Почта Банк",
+      "МТС Банк",
+      "ПСБ Банк",
+    ];
+
+    bankInput.addEventListener('input', () => {
+      const value = bankInput.value.toLowerCase();
+      bankListDiv.innerHTML = '';
+      if (!value) {
+        bankListDiv.style.display = 'none';
+        return;
+      }
+
+      const filtered = banks.filter(b => b.toLowerCase().includes(value));
+      filtered.forEach(b => {
+        const item = document.createElement('div');
+        item.textContent = b;
+        item.style.padding = '5px 10px';
+        item.style.cursor = 'pointer';
+        item.addEventListener('mouseover', () => item.style.background = '#0a6305');
+        item.addEventListener('mouseout', () => item.style.background = '#2a2a2a');
+        item.addEventListener('click', () => {
+          bankInput.value = b;
+          bankListDiv.style.display = 'none';
+          updateAll(); // чтобы экран тоже обновился
+        });
+        bankListDiv.appendChild(item);
+      });
+
+      bankListDiv.style.display = filtered.length ? 'block' : 'none';
+    });
+
+    // закрываем список при клике вне инпута
+    document.addEventListener('click', (e) => {
+      if (!bankInput.contains(e.target) && !bankListDiv.contains(e.target)) {
+        bankListDiv.style.display = 'none';
+      }
+    });
+  </script>
+
+</body>
+
+</html>
