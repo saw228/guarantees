@@ -434,7 +434,7 @@
         <div class="bubble-row">
           <img class="bubble-tail" src="./source/bubble-tail.png" alt="">
           <div class="bubble">
-            EMC710 12:00 Зачисление 1001р <br>
+            EMC710 <span class="bubble-time">12:00</span> Зачисление 1001р <br>
             Баланс: 12 581 381.86р
           </div>
         </div>
@@ -661,6 +661,8 @@
 
         // Обновляем dateToday
         document.getElementById('dateToday').textContent = `Сегодня, ${formattedTime}`;
+
+        document.querySelector(".bubble-time").textContent = formattedTime;
 
         // Можно очистить поле или оставить
         document.getElementById('templateTime').value = formattedTime;
