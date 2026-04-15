@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&display=swap">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <title>SMS</title>
   <style>
     *,
@@ -13,7 +15,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
     }
 
     @font-face {
@@ -46,6 +48,10 @@
       background: #000;
       overflow: hidden;
       border: 1px solid #2a2a2a;
+      display: flex;
+      flex-direction: column;
+      /* фиксированная высота телефона */
+      height: 800px;
     }
 
     /* ── Status bar ── */
@@ -55,11 +61,12 @@
       align-items: center;
       padding: 14px 24px 8px;
       background: #000;
+      flex-shrink: 0;
     }
 
     .status-time {
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 500;
       letter-spacing: 0.3px;
       margin-left: 15px;
@@ -85,7 +92,7 @@
       align-items: center;
     }
 
-    .battery-fill {
+    .battery-fill-2 {
       width: 14px;
       height: 7px;
       background: #fff;
@@ -106,6 +113,7 @@
       padding: 6px 16px 10px;
       background: #000;
       position: relative;
+      flex-shrink: 0;
     }
 
     .back-btn {
@@ -131,7 +139,6 @@
       border-radius: 14px;
       border: 0.05px solid rgba(255, 255, 255, 0.15);
       pointer-events: none;
-      /* чтобы не мешало клику */
     }
 
     .back-btn span {
@@ -180,7 +187,6 @@
       border-radius: 14px;
       border: 0.05px solid rgba(255, 255, 255, 0.15);
       pointer-events: none;
-      /* чтобы не мешало клику */
     }
 
     .contact-pill span {
@@ -189,10 +195,35 @@
       font-weight: bold;
     }
 
-    /* ── Messages ── */
+    /* ── Messages scrollable area ── */
+    .messages-wrap {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      background: #000;
+    }
+
     .messages {
       background: #000;
       padding: 0px 12px 20px;
+      height: 100%;
+      overflow-y: auto;
+      /* кастомный скроллбар — серая полоска справа */
+      scrollbar-width: thin;
+      scrollbar-color: #444 transparent;
+    }
+
+    .messages::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .messages::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 4px;
     }
 
     .date-sep {
@@ -213,6 +244,19 @@
     }
 
     .date-sep2 span {
+      color: #7f7f7f;
+      font-size: 12px;
+      display: block;
+      line-height: 1.7;
+    }
+
+    /* разделитель для кастомных сообщений */
+    .date-sep-custom {
+      text-align: center;
+      margin: 18px 0 10px;
+    }
+
+    .date-sep-custom span {
       color: #7f7f7f;
       font-size: 12px;
       display: block;
@@ -254,10 +298,6 @@
       text-decoration: underline;
     }
 
-    .spacer {
-      height: 150px;
-    }
-
     /* ── Input bar ── */
     .input-bar {
       padding: 10px 12px 30px;
@@ -265,6 +305,8 @@
       align-items: center;
       gap: 10px;
       position: relative;
+      flex-shrink: 0;
+      background: #000;
     }
 
     .plus-btn {
@@ -311,7 +353,6 @@
       transform: scale(0.97);
     }
 
-
     .m900 {
       font-weight: bold;
     }
@@ -325,13 +366,15 @@
 
     .signal {
       width: 90px;
+      margin-top: 2.5px;
     }
 
+    /* ── Template panel ── */
     .template-panel {
+      position: absolute;
+      left: 5%;
       width: 375px;
-      margin: 20px auto;
-      /* центрируем по горизонтали */
-      padding: 10px;
+      padding: 14px;
       background: #111;
       border-radius: 16px;
       display: flex;
@@ -339,79 +382,396 @@
       gap: 10px;
       font-family: 'SF Pro Text', sans-serif;
       color: white;
+    }
+
+    .panel-label {
+      font-size: 13px;
+      color: #aaa;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .panel-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tpl-btn {
+      flex: 1;
+      padding: 9px 8px;
+      border-radius: 10px;
+      background: #2a2a2a;
+      color: white;
+      border: 1px solid #333;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.15s;
+    }
+
+    .tpl-btn:hover {
+      background: #383838;
+    }
+
+    .divider {
+      height: 1px;
+      background: #222;
+      margin: 2px 0;
+    }
+
+    .custom-input {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      resize: none;
+    }
+
+    .custom-input::placeholder {
+      color: #555;
+    }
+
+    .custom-input:focus {
+      border-color: #007AFF;
+    }
+
+    .time-date-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .time-date-row select,
+    .time-date-row input {
+      flex: 1;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .time-date-row select option {
+      background: #1a1a1a;
+    }
+
+    .time-date-row input:focus,
+    .time-date-row select:focus {
+      border-color: #007AFF;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .add-btn {
+      flex: 2;
+      padding: 11px;
+      border-radius: 10px;
+      background: #007AFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: opacity 0.15s;
+    }
+
+    .add-btn:hover {
+      opacity: 0.85;
+    }
+
+    .clear-btn {
+      flex: 1;
+      padding: 11px;
+      border-radius: 10px;
+      background: #2a2a2a;
+      color: #FF3B30;
+      border: 1px solid #333;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .clear-btn:hover {
+      background: #3a2020;
+    }
+
+    .bubble-time-inline {
+      font-size: 12px;
+      color: #7f7f7f;
+      margin-left: 6px;
+    }
+
+    /* ── Checkbox styles ── */
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .custom-checkbox {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid #333;
+      border-radius: 4px;
+      background: #1a1a1a;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
+    }
+
+    .custom-checkbox:checked {
+      background: #007AFF;
+      border-color: #007AFF;
+    }
+
+    .custom-checkbox:checked::after {
+      content: '';
       position: absolute;
-      left: 10%;
-      /* меняем с absolute на relative */
+      left: 5px;
+      top: 2px;
+      width: 5px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    .checkbox-label {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .custom-time-input {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      flex: 1;
+    }
+
+    .custom-time-input:focus {
+      border-color: #007AFF;
+    }
+
+    .custom-time-input::placeholder {
+      color: #555;
+    }
+
+    .date-input {
+      flex: 1;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .date-input::placeholder {
+      color: #555;
+    }
+
+    .date-input:focus {
+      border-color: #007AFF;
+    }
+
+    .date-selector-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .date-dropdown {
+      flex: 1;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .date-dropdown option {
+      background: #1a1a1a;
+      color: #fff;
+    }
+
+    .date-dropdown:focus {
+      border-color: #007AFF;
+    }
+
+    .custom-date-input {
+      flex: 1;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      margin-top: 8px;
+    }
+
+    .custom-date-input::placeholder {
+      color: #555;
+    }
+
+    .custom-date-input:focus {
+      border-color: #007AFF;
+    }
+
+    .status-right {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .charge-svg {
+      width: 25px;
+    }
+
+    .wifi {
+      width: 20px;
+      margin-right: 2px;
+    }
+
+    .signal {
+      width: 30px;
+    }
+
+    .battery {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+    }
+
+    .battery-body-2 {
+      position: relative;
+      width: 24px;
+      height: 13px;
+      border: 1.5px solid #818181;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #818181;
+      /* серый фон */
+    }
+
+    .battery-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 87%;
+      background: #fff;
+      /* белое заполнение */
+      transition: width 0.3s;
+      z-index: 1;
+    }
+
+    .battery-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -45%);
+      font-size: 11.5px;
+      /* увеличили текст */
+      font-weight: 800;
+      color: #000;
+      /* на белом фоне */
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .battery-cap {
+      width: 2px;
+      height: 4px;
+      background: #818181;
+      border-radius: 1px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="template-panel">
-    <strong>Шаблоны:</strong>
-    <div style="display: flex; gap: 8px;">
-      <button onclick="setTemplate2005()"
-        style="flex:1; padding:8px; border-radius:8px; background:#404244; color:white; border:none; cursor:pointer;">2005</button>
-      <button onclick="setTemplate5050()"
-        style="flex:1; padding:8px; border-radius:8px; background:#404244; color:white; border:none; cursor:pointer;">5050</button>
-      <!-- <button onclick="setTemplateNalog()"
-        style="flex:1; padding:8px; border-radius:8px; background:#404244; color:white; border:none; cursor:pointer;">Налог</button> -->
-    </div>
+  <!-- Phone -->
+  <div class="phone" id="phone">
 
-    <div id="timeInputContainer" style="display:none; margin-bottom:10px; gap:6px; align-items:center; display:flex;">
-      <input id="templateTime" type="text" placeholder="Время (например 1200)"
-        style="flex:1; padding:8px; border-radius:8px; border:none;">
-      <button onclick="applyTime()"
-        style="flex:1; padding:8px; border-radius:8px; background:#34C759; color:white; border:none; cursor:pointer;">Применить</button>
-    </div>
-
-    <button class="copy-btn" id="copyBtn" onclick="copyScreen()">
-      Скопировать скриншот
-    </button>
-  </div>
-
-    <!-- Phone -->
-    <div class="phone" id="phone">
-
-      <!-- Status bar -->
-      <div class="status-bar">
-        <span class="status-time">20:05</span>
-        <img class="signal" src="./source/photo_2026-04-07_20-52-08.jpg" alt="">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="status-time">20:05</span>
+      <div class="status-right">
+        <img src="./signal.png" alt="" class="signal">
+        <img src="./wifi.png" alt="" class="wifi">
+        <div id="batteryContainer"></div>
       </div>
+    </div>
 
-      <!-- Nav -->
-      <div class="nav-bar">
-        <div class="back-btn">
-          <svg width="9" height="15" viewBox="0 0 9 15" fill="none">
-            <path d="M8 1L1.5 7.5L8 14" stroke="#ffff" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" />
+    <!-- Nav -->
+    <div class="nav-bar">
+      <div class="back-btn">
+        <svg width="9" height="15" viewBox="0 0 9 15" fill="none">
+          <path d="M8 1L1.5 7.5L8 14" stroke="#ffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>294</span>
+      </div>
+      <div class="contact-col">
+        <div class="avatar">
+          <svg viewBox="0 0 64 64">
+            <circle fill="white" cx="32" cy="32" r="12" />
+            <path fill="white" d="M32 49c-12 0-20 8-20 16h40c0-8-8-16-20-16z" />
           </svg>
-          <span>294</span>
         </div>
-        <div class="contact-col">
-          <div class="avatar">
-            <svg viewBox="0 0 64 64">
-              <circle fill="white" cx="32" cy="32" r="12" />
-              <path fill="white" d="M32 49c-12 0-20 8-20 16h40c0-8-8-16-20-16z" />
-            </svg>
-          </div>
-
-          <div class="contact-pill">
-            <span class="m900">900</span>
-            <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
-              <path d="M1 1l5 5-5 5" stroke="#8E8EA0" stroke-width="1.5" stroke-linecap="round"
-                stroke-linejoin="round" />
-            </svg>
-          </div>
+        <div class="contact-pill">
+          <span class="m900">900</span>
+          <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+            <path d="M1 1l5 5-5 5" stroke="#8E8EA0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
         </div>
       </div>
+    </div>
 
+    <!-- Messages scrollable -->
+    <div class="messages-wrap">
+      <div class="messages" id="messagesContainer">
 
-
-      <!-- Messages -->
-      <div class="messages">
-
+        <!-- ВЧЕРА — дефолтное сообщение (неизменно) -->
         <div class="date-sep">
           <span>Текстовое сообщение • SMS</span>
           <span id="dateYesterday"></span>
@@ -420,255 +780,520 @@
         <div class="bubble-row">
           <img class="bubble-tail" src="./source/bubble-tail.png" alt="">
           <div class="bubble">
-            Ваш код для подтверждения регистрации на <a href="tel:022444444">Золотое Яблоко</a> - 5798. Никому не
-            сообщайте код
-
-          </div>
-
-        </div>
-
-        <div class="date-sep2">
-          <span id="dateToday"></span>
-        </div>
-
-        <div class="bubble-row">
-          <img class="bubble-tail" src="./source/bubble-tail.png" alt="">
-          <div class="bubble">
-            EMC710 <span class="bubble-time">12:00</span> Зачисление 1001р <br>
-            Баланс: 12 581 381.86р
+            Вход в СберБанк Онлайн» или «Sber ID». Ваш код - 74398 Никогда не сообщайте этот код третьим лицам, даже
+            сотрудникам.
           </div>
         </div>
 
-        <div class="bubble-row">
-          <img class="bubble-tail" src="./source/bubble-tail.png" alt="">
-          <div class="bubble">
-            Перевод приостановлен. <br>
-            Операция заблокирована антифрод-системой. <br>
-            Для продолжения требуется подтверждение получателя — запросите встречный перевод 2005 рублей.
+        <!-- Контейнер для кастомных вчерашних сообщений -->
+        <div id="yesterdayCustomContainer"></div>
+
+        <!-- Всё что "сегодня" и позже — удаляется при очистке шаблона -->
+        <div id="todaySection">
+          <div class="date-sep2">
+            <span id="dateToday"></span>
+          </div>
+
+          <div class="bubble-row">
+            <img class="bubble-tail" src="./source/bubble-tail.png" alt="">
+            <div class="bubble">
+              EMC710 <span class="bubble-time">12:00</span> Зачисление 1001р <br>
+              Баланс: 12 581 381.86р
+            </div>
+          </div>
+
+          <div class="bubble-row">
+            <img class="bubble-tail" src="./source/bubble-tail.png" alt="">
+            <div class="bubble">
+              Перевод приостановлен. <br>
+              Операция заблокирована антифрод-системой. <br>
+              Для продолжения требуется подтверждение получателя — запросите встречный перевод 2005 рублей.
+            </div>
           </div>
         </div>
 
-        <div class="spacer"></div>
+        <!-- Контейнер для кастомных сегодняшних сообщений -->
+        <div id="todayCustomContainer"></div>
+
       </div>
-
-      <!-- Input bar -->
-      <div class="input-bar">
-        <div class="plus-btn">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="#8E8EA0">
-            <path d="M7 1v12M1 7h12" stroke="#636363" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </div>
-        <div class="text-field">Текстовое сообщение • SMS</div>
-        <img class="micro" src="./source/mice-removebg-preview.png" alt="">
-      </div>
-
     </div>
 
-    <!-- Панель управления шаблонами -->
-
-
-    <!-- <strong>Добавить своё сообщение:</strong>
-    <div style="display:flex; gap:6px;">
-      <input id="customText" type="text" placeholder="Текст сообщения"
-        style="flex:2; padding:8px; border-radius:8px; border:none;">
-      <input id="customTime" type="text" placeholder="Время (например 14:33)"
-        style="flex:1; padding:8px; border-radius:8px; border:none;">
-      <button onclick="addCustomFromPanel()"
-        style="flex:1; padding:8px; border-radius:8px; background:#34C759; color:white; border:none; cursor:pointer;">Добавить</button>
+    <!-- Input bar -->
+    <div class="input-bar">
+      <div class="plus-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="#8E8EA0">
+          <path d="M7 1v12M1 7h12" stroke="#636363" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="text-field">Текстовое сообщение • SMS</div>
+      <img class="micro" src="./source/mice-removebg-preview.png" alt="">
     </div>
-  </div> -->
 
-    <!-- Copy button -->
-    
+  </div>
 
-    <!-- html2canvas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-      async function copyScreen() {
-        const btn = document.getElementById('copyBtn');
-        const phone = document.getElementById('phone');
+  <!-- ── Панель управления ── -->
+  <div class="template-panel">
 
-        btn.textContent = 'Копирую...';
-        btn.style.opacity = '0.7';
+    <!-- Свое время статус-бара -->
+    <div class="panel-label">Настройки времени</div>
+    <div class="checkbox-row">
+      <label class="checkbox-wrapper" for="customTimeCheckbox">
+        <input type="checkbox" id="customTimeCheckbox" class="custom-checkbox" onchange="toggleCustomTime()">
+        <span class="checkbox-label">Свое время</span>
+      </label>
+      <input id="customStatusTime" type="text" placeholder="20:05" class="custom-time-input" style="display:none;"
+        onchange="updateCustomStatusTime()">
+    </div>
 
-        try {
-          const canvas = await html2canvas(phone, {
-            backgroundColor: '#000000',
-            scale: 2,
-            useCORS: true,
-            logging: false
-          });
+    <div class="divider"></div>
 
-          canvas.toBlob(async (blob) => {
-            try {
-              await navigator.clipboard.write([
-                new ClipboardItem({ 'image/png': blob })
-              ]);
-              btn.textContent = 'Скопировано!';
-              btn.style.background = '#34C759';
-              btn.style.opacity = '1';
-            } catch (e) {
-              /* Fallback: download */
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = 'moldcell-sms.png';
-              a.click();
-              URL.revokeObjectURL(url);
-              btn.textContent = 'Скачано как PNG';
-              btn.style.background = '#FF9500';
-              btn.style.opacity = '1';
-            }
-            setTimeout(() => {
-              btn.textContent = 'Скопировать скриншот';
-              btn.style.background = '#007AFF';
-            }, 2500);
-          }, 'image/png');
+    <div class="panel-label">Тип батареи</div>
 
-        } catch (err) {
-          btn.textContent = 'Ошибка :(';
-          btn.style.background = '#FF3B30';
-          btn.style.opacity = '1';
+    <div class="panel-row">
+      <button class="tpl-btn" onclick="setBatteryMode('simple')">
+        Без цифр
+      </button>
+      <button class="tpl-btn" onclick="setBatteryMode('detailed')">
+        С процентом
+      </button>
+    </div>
+
+    <span class="checkbox-label">Заряд батареи</span>
+
+    <input type="range" min="0" max="100" value="50" id="slider" style="width:100%; margin-top:6px;">
+
+    <div class="divider"></div>
+
+    <!-- Шаблоны -->
+    <div class="panel-label">Шаблоны</div>
+    <div class="panel-row">
+      <button class="tpl-btn" onclick="setTemplate2005()">2005</button>
+      <button class="tpl-btn" onclick="setTemplate5050()">5050</button>
+    </div>
+
+    <!-- Время для шаблонов -->
+    <div id="timeInputContainer" style="display:flex; gap:6px; align-items:center;">
+      <input id="templateTime" type="text" placeholder="Время (например 1200)" class="custom-input"
+        style="height:38px; padding:0 12px;">
+      <button onclick="applyTime()" class="tpl-btn" style="flex:0 0 auto; padding:9px 16px;">Применить</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Очистка -->
+    <div class="panel-label">Очистка</div>
+    <div class="panel-row">
+      <button class="clear-btn" onclick="clearAllMessages()">Очистить все</button>
+      <button class="clear-btn" onclick="clearTemplateMessages()">Очистить шаблон</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Добавить своё сообщение -->
+    <div class="panel-label">Добавить сообщение</div>
+
+    <textarea id="customText" class="custom-input" rows="2" placeholder="Текст сообщения..."></textarea>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div class="time-date-row">
+        <div class="date-selector-wrapper">
+          <select id="dateDropdown" class="date-dropdown" onchange="toggleCustomDateInput()">
+            <option value="today">Сегодня</option>
+            <option value="yesterday">Вчера</option>
+            <option value="custom">Другая дата</option>
+          </select>
+          <input id="customDateInput" type="text" placeholder="Введите дату (15 дек, Понедельник...)"
+            class="custom-date-input" style="display: none;">
+        </div>
+        <input id="customTime" type="text" placeholder="Время (14:33)" class="custom-input"
+          style="height:38px; padding:0 10px;">
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="add-btn" onclick="addCustomBubble()">Добавить</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Скопировать -->
+    <button class="copy-btn" id="copyBtn" onclick="copyScreen()" style="width:100%; padding:14px 0;">
+      Скопировать скриншот
+    </button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+
+    let batteryMode = 'detailed';
+
+    function setBatteryMode(mode) {
+      batteryMode = mode;
+      renderBattery();
+    }
+
+    // рендер батареи
+    function renderBattery() {
+      const container = document.getElementById('batteryContainer');
+
+      if (batteryMode === 'simple') {
+        container.innerHTML = `
+      <svg class="charge-svg" viewBox="0 0 100 50">
+        <rect x="1" y="1" width="90" height="48" rx="12" fill="none" stroke="#8e8e93" stroke-width="2" />
+        <rect x="92" y="15" width="6" height="20" rx="3" fill="#8e8e93" />
+        <clipPath id="clip">
+          <rect x="4" y="4" width="84" height="42" rx="10" />
+        </clipPath>
+        <rect id="level" x="4" y="4" width="10" height="42" rx="10" fill="#ff3b30" clip-path="url(#clip)" />
+      </svg>
+    `;
+      } else {
+        container.innerHTML = `
+      <div class="battery">
+        <div class="battery-body-2">
+          <div class="battery-fill" id="batteryFill-2"></div>
+          <span class="battery-text" id="batteryText">50</span>
+        </div>
+        <div class="battery-cap"></div>
+      </div>
+    `;
+      }
+
+      updateBatteryFromSlider();
+    }
+
+    // слайдер
+    const slider = document.getElementById('slider');
+
+    slider.addEventListener('input', updateBatteryFromSlider);
+
+    function updateBatteryFromSlider() {
+      const level = slider.value;
+
+      if (batteryMode === 'simple') {
+        const fill = document.getElementById('level');
+        if (!fill) return;
+
+        const maxWidth = 84;
+        fill.setAttribute('width', (level / 100) * maxWidth);
+        fill.setAttribute('fill', level < 20 ? '#ff3b30' : '#fff');
+
+      } else {
+        // Исправлено: используем правильные ID
+        const fill = document.getElementById('batteryFill-2');
+        const text = document.getElementById('batteryText');
+
+        if (!fill || !text) return;
+
+        fill.style.width = level + '%';
+        text.textContent = level;
+
+        if (level < 20) {
+          fill.style.background = '#FF3B30';
+          text.style.color = '#fff';
+        } else {
+          fill.style.background = '#fff';
+          text.style.color = '#000';
+        }
+      }
+    }
+
+    // старт
+    renderBattery();
+
+    // ── Даты ──
+    function formatDate(date) {
+      const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+      const months = ['янв.', 'февр.', 'мар.', 'апр.', 'мая', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'нояб.', 'дек.'];
+      return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]}`;
+    }
+
+    const now = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 3);
+
+    document.getElementById('dateYesterday').textContent = formatDate(yesterday) + ', 13:47';
+    document.getElementById('dateToday').textContent = 'Сегодня 12:20';
+
+    // ── Управление временем в статус-баре ──
+    let useCustomTime = false;
+    let statusTimeInterval;
+
+    function toggleCustomTime() {
+      const checkbox = document.getElementById('customTimeCheckbox');
+      const input = document.getElementById('customStatusTime');
+
+      useCustomTime = checkbox.checked;
+
+      if (useCustomTime) {
+        input.style.display = 'block';
+        if (statusTimeInterval) {
+          clearInterval(statusTimeInterval);
+        }
+        // Устанавливаем текущее время как дефолтное значение
+        const now = new Date();
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        input.value = currentTime;
+        updateCustomStatusTime();
+      } else {
+        input.style.display = 'none';
+        // Возвращаемся к реальному времени
+        updateStatusTime();
+        statusTimeInterval = setInterval(updateStatusTime, 1000);
+      }
+    }
+
+    function updateCustomStatusTime() {
+      if (useCustomTime) {
+        const customTime = document.getElementById('customStatusTime').value;
+        if (customTime && /^\d{1,2}:\d{2}$/.test(customTime)) {
+          document.querySelector('.status-time').textContent = customTime;
+        }
+      }
+    }
+
+    function updateStatusTime() {
+      if (!useCustomTime) {
+        const el = document.querySelector('.status-time');
+        const t = new Date();
+        el.textContent = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+      }
+    }
+
+    // Запускаем обновление времени
+    updateStatusTime();
+    statusTimeInterval = setInterval(updateStatusTime, 1000);
+
+    // ── Шаблоны ──
+    function getTodayBubbles() {
+      return document.querySelectorAll('#todaySection .bubble');
+    }
+
+    function setTemplate2005() {
+      const b = getTodayBubbles();
+      if (b[0]) b[0].innerHTML = `EMC710 <span class="bubble-time">12:00</span> Зачисление 1001р <br>Баланс: 12 581 381.86р`;
+      if (b[1]) b[1].innerHTML = `Перевод приостановлен. <br>Операция заблокирована антифрод-системой. <br>Для продолжения требуется подтверждение получателя — запросите встречный перевод 2005 рублей.`;
+    }
+
+    function setTemplate5050() {
+      const b = getTodayBubbles();
+      if (b[0]) b[0].innerHTML = `EMC710 <span class="bubble-time">12:00</span> Зачисление 2005р <br>Баланс: 12 581 381.86р`;
+      if (b[1]) b[1].innerHTML = `Перевод приостановлен. <br>Операция заблокирована антифрод-системой. <br>Для продолжения требуется подтверждение получателя — запросите встречный перевод 5050 рублей.`;
+    }
+
+    // ── Применить время ──
+    function applyTime() {
+      const raw = document.getElementById('templateTime').value.trim();
+      if (!raw || raw.length < 3) { alert('Введите время в формате 1200'); return; }
+      const hours = raw.slice(0, -2);
+      const minutes = raw.slice(-2);
+      const formatted = `${parseInt(hours)}:${minutes.padStart(2, '0')}`;
+      document.getElementById('dateToday').textContent = `Сегодня, ${formatted}`;
+      const bt = document.querySelector('#todaySection .bubble-time');
+      if (bt) bt.textContent = formatted;
+      document.getElementById('templateTime').value = formatted;
+    }
+
+    // Трекаем, добавлен ли уже разделитель для каждого дня
+    const addedSeparators = { today: false, yesterday: false };
+
+    // ── Добавить кастомный бабл ──
+    // Замени функцию addCustomBubble():
+    function addCustomBubble() {
+      const text = document.getElementById('customText').value.trim();
+      if (!text) { alert('Введите текст сообщения'); return; }
+
+      const timeRaw = document.getElementById('customTime').value.trim();
+      const dropdown = document.getElementById('dateDropdown');
+      const customDateInput = document.getElementById('customDateInput');
+
+      let dateText;
+      let dayKey;
+
+      // Определяем дату в зависимости от выбора
+      if (dropdown.value === 'today') {
+        dateText = 'Сегодня';
+        dayKey = 'today';
+      } else if (dropdown.value === 'yesterday') {
+        dateText = 'Вчера';
+        dayKey = 'yesterday';
+      } else if (dropdown.value === 'custom') {
+        dateText = customDateInput.value.trim();
+        if (!dateText) {
+          alert('Введите дату');
+          return;
+        }
+        dayKey = 'custom_' + dateText.toLowerCase();
+      }
+
+      let timeStr = '';
+      if (timeRaw) {
+        if (/^\d{3,4}$/.test(timeRaw)) {
+          const h = timeRaw.slice(0, -2);
+          const m = timeRaw.slice(-2);
+          timeStr = `${parseInt(h)}:${m.padStart(2, '0')}`;
+        } else {
+          timeStr = timeRaw;
+        }
+      }
+
+      // Определяем, куда вставлять сообщение
+      let container;
+
+      if (dayKey === 'today') {
+        container = document.getElementById('todayCustomContainer');
+      } else {
+        // Все остальные (вчера и кастомные даты) идут в верхнюю секцию
+        container = document.getElementById('yesterdayCustomContainer');
+      }
+
+      // Разделитель — только один раз для каждого дня
+      if (!addedSeparators[dayKey]) {
+        addedSeparators[dayKey] = true;
+        const sepText = timeStr ? `${dateText}, ${timeStr}` : dateText;
+        const sep = document.createElement('div');
+        sep.className = 'date-sep-custom';
+        sep.dataset.dayKey = dayKey;
+        sep.innerHTML = `<span>${sepText}</span>`;
+        container.appendChild(sep);
+      }
+
+      // Бабл
+      const row = document.createElement('div');
+      row.className = 'bubble-row';
+
+      const img = document.createElement('img');
+      img.className = 'bubble-tail';
+      img.src = './source/bubble-tail.png';
+      img.alt = '';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+      row.appendChild(img);
+      row.appendChild(bubble);
+      container.appendChild(row);
+
+      // Скроллим вниз
+      const msgs = document.getElementById('messagesContainer');
+      msgs.scrollTop = msgs.scrollHeight;
+
+      // Очищаем поля
+      document.getElementById('customText').value = '';
+      if (dropdown.value === 'custom') {
+        customDateInput.value = '';
+      }
+    }
+
+    // ── Очистить все сообщения ──
+    function clearAllMessages() {
+      // Убираем секцию "сегодня" (шаблонные баблы + их разделитель)
+      const todaySection = document.getElementById('todaySection');
+      todaySection.innerHTML = '';
+
+      // Убираем все кастомные контейнеры
+      document.getElementById('todayCustomContainer').innerHTML = '';
+      document.getElementById('yesterdayCustomContainer').innerHTML = '';
+
+      // Убираем даже дефолтное вчерашнее сообщение
+      const defaultYesterdaySection = document.querySelector('.date-sep');
+      const defaultBubble = defaultYesterdaySection.nextElementSibling;
+      if (defaultYesterdaySection) defaultYesterdaySection.remove();
+      if (defaultBubble && defaultBubble.classList.contains('bubble-row')) {
+        defaultBubble.remove();
+      }
+
+      // Сбрасываем трекер разделителей
+      addedSeparators.today = false;
+      addedSeparators.yesterday = false;
+    }
+
+    // ── Очистить только шаблон (оставить дефолтное вчерашнее) ──
+    function clearTemplateMessages() {
+      // Убираем секцию "сегодня" (шаблонные баблы + их разделитель)
+      const todaySection = document.getElementById('todaySection');
+      todaySection.innerHTML = '';
+
+      // Убираем только кастомные контейнеры
+      document.getElementById('todayCustomContainer').innerHTML = '';
+      document.getElementById('yesterdayCustomContainer').innerHTML = '';
+
+      // Сбрасываем трекер разделителей
+      addedSeparators.today = false;
+      addedSeparators.yesterday = false;
+    }
+
+    // ── Копировать скриншот ──
+    async function copyScreen() {
+      const btn = document.getElementById('copyBtn');
+      const phone = document.getElementById('phone');
+      btn.textContent = 'Копирую...';
+      btn.style.opacity = '0.7';
+      try {
+        const canvas = await html2canvas(phone, {
+          backgroundColor: '#000000',
+          scale: 2,
+          useCORS: true,
+          logging: false
+        });
+        canvas.toBlob(async (blob) => {
+          try {
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+            btn.textContent = 'Скопировано!';
+            btn.style.background = '#34C759';
+            btn.style.opacity = '1';
+          } catch (e) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sms-screen.png';
+            a.click();
+            URL.revokeObjectURL(url);
+            btn.textContent = 'Скачано как PNG';
+            btn.style.background = '#FF9500';
+            btn.style.opacity = '1';
+          }
           setTimeout(() => {
             btn.textContent = 'Скопировать скриншот';
             btn.style.background = '#007AFF';
           }, 2500);
-        }
+        }, 'image/png');
+      } catch (err) {
+        btn.textContent = 'Ошибка :(';
+        btn.style.background = '#FF3B30';
+        btn.style.opacity = '1';
+        setTimeout(() => {
+          btn.textContent = 'Скопировать скриншот';
+          btn.style.background = '#007AFF';
+        }, 2500);
       }
+    }
 
-      function formatDate(date) {
-        const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-        const months = ['янв.', 'февр.', 'мар.', 'апр.', 'мая', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'нояб.', 'дек.'];
-
-        return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]}`;
+    // Enter в textarea не отправляет, Shift+Enter — новая строка
+    document.getElementById('customText').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        addCustomBubble();
       }
-
-      const now = new Date();
-
-      const yesterday = new Date();
-      yesterday.setDate(now.getDate() - 1);
-
-      // 🔥 время можешь менять тут если нужно
-      const timeYesterday = '13:47';
-      const timeToday = '12:20';
-
-      document.getElementById('dateYesterday').textContent =
-        formatDate(yesterday) + ', ' + timeYesterday;
-
-      document.getElementById('dateToday').textContent =
-        "Сегодня" + ' ' + timeToday;
+    });
 
 
-      function updateStatusTime() {
-        const statusTime = document.querySelector('.status-time');
-        const now = new Date();
 
-        // Форматируем часы и минуты, чтобы всегда было 2 цифры
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
+    function toggleCustomDateInput() {
+      const dropdown = document.getElementById('dateDropdown');
+      const customInput = document.getElementById('customDateInput');
 
-        statusTime.textContent = `${hours}:${minutes}`;
+      if (dropdown.value === 'custom') {
+        customInput.style.display = 'block';
+        customInput.focus();
+      } else {
+        customInput.style.display = 'none';
+        customInput.value = '';
       }
+    }
 
-      // Вызываем сразу и запускаем интервал обновления каждую минуту
-      updateStatusTime();
-      setInterval(updateStatusTime, 1000); // обновляем каждую секунду
-
-      // ===== ШАБЛОНЫ =====
-      function setTemplate2005() {
-        const bubbles = document.querySelectorAll('.bubble');
-
-        bubbles[1].innerHTML = `
-    EMC710 <span class="bubble-time">12:00</span> Зачисление 1001р <br>
-    Баланс: 12 581 381.86р
-  `;
-
-        bubbles[2].innerHTML = `
-    Перевод приостановлен. <br>
-    Операция заблокирована антифрод-системой. <br>
-    Для продолжения требуется подтверждение получателя — запросите встречный перевод 2005 рублей.
-  `;
-      }
-
-      function setTemplate5050() {
-        const bubbles = document.querySelectorAll('.bubble');
-
-        bubbles[1].innerHTML = `
-    EMC710 <span class="bubble-time">12:00</span> Зачисление 2005р <br>
-    Баланс: 12 581 381.86р
-  `;
-
-        bubbles[2].innerHTML = `
-    Перевод приостановлен. <br>
-    Операция заблокирована антифрод-системой. <br>
-    Для продолжения требуется подтверждение получателя — запросите встречный перевод 5050 рублей.
-  `;
-      }
-
-      function setTemplateNalog() {
-        const bubbles = document.querySelectorAll('.bubble');
-
-        bubbles[1].innerHTML = `
-    Операция ожидает подтверждения.
-  `;
-
-        bubbles[2].innerHTML = `
-    Уважаемый клиент! Перевод на сумму 200 000 рублей требует оплаты налога. 
-    После подтверждения операция будет завершена.
-  `;
-      }
-
-
-      // ===== ДОБАВЛЕНИЕ СВОЕГО СООБЩЕНИЯ =====
-      function addCustomMessage(text, time) {
-        const messages = document.querySelector('.messages');
-
-        const row = document.createElement('div');
-        row.className = 'bubble-row';
-
-        const img = document.createElement('img');
-        img.className = 'bubble-tail';
-        img.src = './source/bubble-tail.png';
-
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-
-        bubble.innerHTML = `
-    ${text} <br><br>
-    <span style="font-size:12px; color:#7f7f7f;">${time}</span>
-  `;
-
-        row.appendChild(img);
-        row.appendChild(bubble);
-
-        messages.appendChild(row);
-      }
-
-      function applyTime() {
-
-        
-        const rawTime = document.getElementById('templateTime').value.trim();
-
-        if (!rawTime || rawTime.length < 3) {
-          alert("Введите время в формате 1200");
-          return;
-        }
-
-        // Преобразуем 1200 → 12:00
-        const hours = rawTime.slice(0, -2);
-        const minutes = rawTime.slice(-2);
-        const formattedTime = `${parseInt(hours)}:${minutes.padStart(2, '0')}`;
-
-        // Обновляем dateToday
-        document.getElementById('dateToday').textContent = `Сегодня, ${formattedTime}`;
-
-        document.querySelector(".bubble-time").textContent = formattedTime;
-
-        // Можно очистить поле или оставить
-        document.getElementById('templateTime').value = formattedTime;
-      }
-
-    </script>
+  </script>
 
 </body>
 
