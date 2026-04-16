@@ -363,6 +363,25 @@
         .popup div:hover {
             background: #f3f3f3;
         }
+
+        .random-btn {
+            margin-top: 12px;
+            width: 100%;
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 10px;
+            padding: 10px;
+
+            font-size: 13px;
+            cursor: pointer;
+
+            transition: all 0.2s ease;
+        }
+
+        .random-btn:hover {
+            border-color: #111;
+            background: #f7f7f7;
+        }
     </style>
 
 </head>
@@ -422,6 +441,10 @@
 
             <button id="generate-doc" style="width:100%; margin-top:10px;">
                 Сгенерировать номер документа
+            </button>
+
+            <button type="button" class="copy-button random-btn" onclick="fillRandomData()">
+                Сгенерировать Код авторизации
             </button>
         </div>
     </div>
@@ -529,7 +552,54 @@
 
     <script>
 
-        const names = ["Полина Сергеевна З.","Полина Александровна Ч.", "Мария Александровна Б.", "Анна Александровна Ж."];
+        function getRandomDigits(length) {
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += Math.floor(Math.random() * 10);
+            }
+            return result;
+        }
+
+        function getRandomSum() {
+            const values = [1000, 2500, 5000, 10000, 20000, 50000, 100000, 200000];
+            return values[Math.floor(Math.random() * values.length)];
+        }
+
+        function formatMoney(value) {
+            return Number(value).toLocaleString('ru-RU') + ' рублей 0 копеек';
+        }
+
+        function fillRandomData() {
+
+            // время (простая дата)
+            const now = new Date();
+            const date =
+                String(now.getDate()).padStart(2, '0') + '.' +
+                String(now.getMonth() + 1).padStart(2, '0') + '.' +
+                now.getFullYear();
+
+            document.getElementById('inp-an-time').value = date;
+
+            // карты
+            document.getElementById('inp-an-hiscard').value = getRandomDigits(4);
+            document.getElementById('inp-an-fromcard').value = getRandomDigits(4);
+
+            // комиссия
+            document.getElementById('inp-an-com').value = (Math.random() * 5).toFixed(2) + '%';
+
+            // сумма
+            const sum = getRandomSum();
+            document.getElementById('inp-an-sum').value = sum;
+
+            // имя (простое рандомное)
+            const names = ['Иван', 'Алексей', 'Дмитрий', 'Максим', 'Артём', 'Сергей'];
+            document.getElementById('inp-an-fromname').value =
+                names[Math.floor(Math.random() * names.length)];
+
+            document.querySelector('.sub-info.sp').textContent = getRandomDigits(6);
+        }
+
+        const names = ["Полина Сергеевна З.", "Полина Александровна Ч.", "Мария Александровна Б.", "Анна Александровна Ж."];
 
         const popup = document.getElementById("name-popup");
 
