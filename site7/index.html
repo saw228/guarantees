@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <title>Налоговая декларация</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @font-face {
+            font-family: 'OCR-B';
+            src: url('./ocrb.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+
+            background-color: gray;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .document-container {
+            width: 210mm;
+            min-height: 297mm;
+            background-color: white;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            border: 1px solid black;
+        }
+
+        .copy-button {
+            width: 250px;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .copy-button.copied {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        .copy-button span {
+            display: inline-block;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .copy-button.changing span {
+            opacity: 0;
+            transform: translateY(-3px);
+        }
+
+        .copy-button:hover {
+            background-color: #1976D2;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .barcode-placeholder {
+            width: 150px;
+            height: 50px;
+            border: 1px solid #000;
+            background-color: #f0f0f0;
+        }
+
+        .page-info {
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 130px;
+            margin-top: -20px;
+        }
+
+        .page-number {
+            display: inline-flex;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .digit-box {
+            width: 30px;
+            height: 28px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        /* Form title */
+        .form-title {
+            text-align: center;
+            font-size: 15px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            margin-left: 545px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 700;
+            margin-right: -50px;
+            /* жирный */
+        }
+
+        .form-name {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-subtitle {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* Form fields */
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 11px;
+        }
+
+        .form-row-2 {
+            font-size: 9px;
+        }
+
+        .form-row-3 {
+            margin-top: 15px;
+        }
+
+        .form-row label {
+            margin-right: 10px;
+        }
+
+        .field-boxes {
+            display: flex;
+        }
+
+        .field-box {
+            width: 28px;
+            height: 31px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 19px;
+            padding: 0 8.6px;
+            font-family: Arial, Helvetica, sans-serif;
+            border-right: none;
+        }
+
+        .field-box-fio {
+            width: 28px;
+            height: 26px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 0 8.6px;
+            font-family: Arial, Helvetica, sans-serif;
+            border-right: none;
+        }
+
+        .field-box-slim {
+            width: 28px;
+            height: 31px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            padding: 0 8.6px;
+            font-family: Arial, Helvetica, sans-serif;
+            border-right: none;
+            font-weight: 500;
+        }
+
+        .field-box-fio:last-child {
+            border-right: 1px solid black;
+            /* возвращаем только последнему */
+        }
+
+        .field-box:last-child {
+            border-right: 1px solid black;
+            /* возвращаем только последнему */
+        }
+
+        .field-box-slim:last-child {
+            border-right: 1px solid black;
+            /* возвращаем только последнему */
+        }
+
+        .field-box-vid {
+            width: 28px;
+            height: 26px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 0 8.6px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 17px;
+            border: 1px solid #000;
+            margin: 0 10px;
+        }
+
+        .checkbox-1 {
+            min-width: 17px;
+            height: 17px;
+            border: 1px solid #000;
+            margin: 0 10px;
+        }
+
+        .checkbox-2 {
+            min-width: 25px;
+            height: 40px;
+            border: 1px solid #000;
+            margin: 0 10px;
+        }
+
+
+        /* Organization section */
+        .organization-section {
+            margin: 20px 0;
+        }
+
+        .org-name {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0px;
+            font-size: 11px;
+        }
+
+        .underline {
+            border-bottom: 1px solid #000;
+            flex-grow: 1;
+            margin: 0 10px;
+            height: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+            padding-bottom: 2px;
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        /* Name fields */
+        .name-section {
+            margin: 20px 0;
+        }
+
+        .name-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .name-label {
+            min-width: 60px;
+            font-size: 13px;
+        }
+
+        .name-boxes {
+            display: flex;
+        }
+
+        /* Gender section */
+        .gender-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+            font-size: 11px;
+        }
+
+        /* Country section */
+        .country-section {
+            margin: 20px 0;
+            font-size: 11px;
+        }
+
+        /* Declaration section */
+        .declaration-section {
+            margin: 30px 0;
+            font-size: 11px;
+        }
+
+        .declaration-text {
+            text-align: left;
+            display: flex;
+            align-items: center;
+
+        }
+
+        .declaration-text-2 {
+            text-align: left;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .declaration-options {
+            margin-left: 20px;
+        }
+
+        .declaration-option {
+            margin-bottom: 5px;
+        }
+
+        /* Signature section */
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .signature-left,
+        .signature-right {
+            width: 56%;
+        }
+
+        .signature-left {
+            width: 44%;
+        }
+
+        .signature-right {
+            margin-top: 30px;
+        }
+
+        .signature-placeholder {
+            width: 150px;
+            height: 40px;
+            border-bottom: 1px solid #000;
+            margin: 10px 0;
+        }
+
+        .date-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Bottom section */
+        .bottom-section {
+            margin-top: 40px;
+            border-top: 1px solid #000;
+            padding-top: 20px;
+        }
+
+        .registration-number {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        /* Bottom signatures */
+        .bottom-signatures {
+            width: 160px;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            justify-content: center;
+            margin-top: 50px;
+            position: absolute;
+            right: 285px;
+            bottom: 8px;
+        }
+
+        .slash {
+            margin: 0 5px;
+            font-size: 15px;
+        }
+
+        .kod {
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .vidDokumenta {
+            width: 50px;
+            margin-right: 10px;
+            text-align: right;
+        }
+
+        .predstavlyaets {
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .checkBoxTitleFirst {
+            max-width: 123px;
+            margin: 0;
+            font-size: 9px;
+            line-height: 1.1;
+            letter-spacing: 0.4px;
+            word-spacing: -0.5px;
+            text-align: center;
+        }
+
+        .pol {
+            text-align: center;
+            width: 25px;
+            height: 25px;
+            border: 1px solid #000;
+            margin: 0 10px;
+            padding: 0 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .pol-text {
+            margin-right: 50px;
+            font-size: 13px;
+        }
+
+        .doc {
+            background-color: white;
+            padding: 30px;
+            display: flex;
+            position: relative;
+        }
+
+        .doc2 {
+            margin-top: 20px;
+            background-color: white;
+            padding: 30px;
+            display: flex;
+            position: relative;
+        }
+
+        .right-border {
+            width: 50px;
+            border: 1px solid black;
+            height: 1300px;
+            border-left: 0px;
+        }
+
+        .srt {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .maleFemale {
+            font-size: 13px;
+        }
+
+        .citizenship {
+            font-size: 13px;
+        }
+
+        .codeOfCountryText {
+            font-size: 13px;
+            margin-right: 5px;
+        }
+
+        .deklSostavlena {
+            font-size: 13px;
+            margin-right: 20px;
+        }
+
+        .bottomRightSideUp {
+            position: absolute;
+            right: 150px;
+            top: 625px;
+            margin-bottom: 30px;
+        }
+
+        .middle-border {
+            position: absolute;
+            top: 656px;
+            left: 360px;
+            width: 1px;
+            height: 674px;
+            background-color: black;
+        }
+
+        .blackCorner {
+            width: 25px;
+            height: 25px;
+            background-color: black;
+        }
+
+        .blackCorner-leftB {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+        }
+
+        .blackCorner-rigthB {
+            position: absolute;
+            bottom: 30px;
+            right: 80px;
+        }
+
+        .blackCorner-leftU {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+        }
+
+        .blackCorner-rightU {
+            position: absolute;
+            top: 30px;
+            left: 165px;
+        }
+
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 220px;
+            background: white;
+            border: 1px solid black;
+            padding: 15px;
+            z-index: 999;
+            font-family: Arial;
+        }
+
+        .control-panel input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* ---- Фамилия block ---- */
+        .header-row {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            margin-bottom: 18px;
+            font-size: 10.5pt;
+        }
+
+        .header-label {
+            padding: 3px 6px 3px 0;
+            white-space: nowrap;
+            align-self: center;
+        }
+
+        .letter-cells {
+            display: flex;
+        }
+
+        .letter-cell {
+            width: 22px;
+            height: 24px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10.5pt;
+            margin-right: -1px;
+        }
+
+        .letter-spacer {
+            width: 14px;
+        }
+
+        .initials-block {
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 10.5pt;
+            white-space: nowrap;
+        }
+
+        .initials-cell {
+            width: 22px;
+            height: 24px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: -1px;
+            font-size: 10.5pt;
+        }
+
+        .initials-label {
+            padding: 0 3px;
+        }
+
+        /* ---- Section title ---- */
+        .section-title {
+            text-align: center;
+            font-size: 12.3pt;
+            font-weight: bold;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            margin-top: 40px;
+        }
+
+        .rate-large {
+            font-size: 18pt;
+            font-weight: bold;
+        }
+
+        /* ---- Main table ---- */
+        table.main {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10pt;
+        }
+
+        table.main th,
+        table.main td {
+            border: 1px solid #000;
+            padding: 5px 6px;
+            vertical-align: middle;
+        }
+
+        table.main .col-num {
+            width: 38px;
+            text-align: center;
+        }
+
+        table.main .col-desc {
+            /* main desc column, takes remaining space */
+        }
+
+        table.main .col-code {
+            width: 80px;
+            text-align: center;
+        }
+
+        table.main .col-val {
+            width: 175px;
+            text-align: center;
+        }
+
+        /* Header row */
+        .th-header {
+            font-weight: normal;
+            font-size: 10pt;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Section subheader rows (gray) */
+        .section-sub {
+            background-color: #e6e6e6;
+            font-weight: normal;
+            font-size: 12pt;
+            text-align: left;
+            padding-left: 50px !important;
+        }
+
+        /* Row number cell - bold */
+        .row-num {
+            font-weight: bold;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Desc cell — main text bold, sub text smaller normal */
+        .desc-main {
+            font-weight: 500;
+            display: block;
+            line-height: 1.3;
+        }
+
+        .desc-sub {
+            font-weight: normal;
+            font-size: 9pt;
+            display: block;
+            line-height: 1.3;
+        }
+
+        /* Value cell */
+        .val-cell {
+            text-align: center;
+            vertical-align: middle;
+            padding-left: 20px !important;
+        }
+
+        .bottom-part {
+            position: absolute;
+            bottom: 22px;
+            left: 120px;
+            display: flex;
+            align-items: center;
+        }
+
+        table.main {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10pt;
+        }
+
+        table.main th,
+        table.main td {
+            border: 1px solid #000;
+            border-right: none;
+            /* Убираем правую границу */
+            padding: 5px 6px;
+            vertical-align: middle;
+        }
+
+        /* Возвращаем правую границу только последней ячейке в строке */
+        table.main th:last-child,
+        table.main td:last-child {
+            border-right: 1px solid #000;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .copy-button {
+            padding: 12px 22px;
+            font-size: 14px;
+            font-family: 'Roboto Mono', monospace;
+
+            background: #ffffff;
+            color: #111;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            transition: all 0.2s ease;
+        }
+
+        /* hover */
+        .copy-button:hover {
+            background: #f5f5f5;
+            border-color: #bbb;
+        }
+
+        /* active (нажатие) */
+        .copy-button:active {
+            transform: scale(0.97);
+            background: #eee;
+        }
+
+        /* лёгкая тень при наведении */
+        .copy-button:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+
+            width: 260px;
+
+            background: #ffffff;
+            border: 1px solid #e6e6e6;
+            border-radius: 14px;
+
+            padding: 16px 16px 18px;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+
+            z-index: 999;
+        }
+
+        /* заголовок */
+        .control-panel h3 {
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #111;
+        }
+
+        /* label */
+        .control-panel label {
+            display: block;
+            font-size: 12px;
+            color: #444;
+            margin: 10px 0 6px;
+        }
+
+        /* inputs */
+        .control-panel input[type="text"] {
+            width: 100%;
+            padding: 9px 10px;
+
+            border: 1px solid #e5e5e5;
+            border-radius: 10px;
+
+            font-size: 13px;
+
+            outline: none;
+            transition: 0.2s ease;
+            background: #fff;
+        }
+
+        /* focus */
+        .control-panel input[type="text"]:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+        }
+
+        /* чекбоксы блок */
+        .control-panel div {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* чекбоксы */
+        .control-panel input[type="checkbox"] {
+            accent-color: #111;
+            transform: scale(1.1);
+        }
+
+        /* текст рядом с чекбоксами */
+        .control-panel div label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            margin: 0;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="control-panel">
+        <h3>Заполнение</h3>
+
+        <label>Фамилия</label>
+        <input type="text" id="lastName">
+
+        <label>Имя</label>
+        <input type="text" id="firstName">
+
+        <label>Отчество</label>
+        <input type="text" id="middleName">
+
+        <label>Сумма</label>
+        <input type="text" id="sum">
+
+        <label>Пол</label>
+        <div>
+            <label><input type="checkbox" id="male"> Муж</label>
+            <label><input type="checkbox" id="female"> Жен</label>
+        </div>
+
+
+
+        <label>Дата</label>
+        <input type="text" id="date" placeholder="ДД.ММ.ГГГГ">
+
+        <label>Дата подачи</label>
+        <input type="text" id="date2" placeholder="ДД.ММ.ГГГГ">
+    </div>
+
+    <div class="buttons">
+        <button class="copy-button" onclick="copyDocument1(event)">Скопировать 1 страницу</button>
+        <button class="copy-button" onclick="copyDocument2(event)">Скопировать 2 страницу</button>
+        <button class="copy-button" onclick="saveToPDF()">Сохранить в PDF</button>
+
+    </div>
+
+
+    <div id="doc" class="doc">
+
+        <div class="document-container" id="document">
+            <!-- Header -->
+            <div class="header">
+                <img style="width: 100px; margin-left: 20px;" src="./Screenshot_1.png" alt="">
+                <div class="page-info">
+                    <span class="srt">Стр.</span>
+                    <div class="page-number">
+                        <div class="digit-box">0</div>
+                        <div class="digit-box">0</div>
+                        <div class="digit-box">1</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form title -->
+            <div class="form-title">Форма по КНД 1151020</div>
+            <div class="form-name">Налоговая декларация</div>
+            <div class="form-subtitle">по налогу на доходы физических лиц</div>
+
+            <!-- Document info -->
+            <div class="form-row form-row-2">
+                <span>Вид документа: 1 - первичный, 3 - корректирующий (через дробь номер корректировки)</span>
+            </div>
+
+            <div class="form-row form-row-3">
+                <span class="vidDokumenta">Вид документа</span>
+                <div class="field-boxes">
+                    <div class="field-box-vid">1</div>
+                </div>
+                <span class="slash">/</span>
+                <div class=" field-box-vid"></div>
+                <span style="margin-left: 360px;">Отчетный налоговый период</span>
+                <div class="field-boxes" style="margin-left: 10px;">
+                    <div class="field-box">2</div>
+                    <div class="field-box">0</div>
+                    <div class="field-box">2</div>
+                    <div class="field-box">6</div>
+                </div>
+            </div>
+
+            <!-- Organization -->
+            <div class="organization-section">
+                <div class="org-name">
+                    <span class="predstavlyaets">Представляется в</span>
+                    <div class="underline">УФНС России по г. Москве</div>
+                    <span class="kod">Код</span>
+                    <div class="field-boxes">
+                        <div class="field-box">7</div>
+                        <div class="field-box">7</div>
+                        <div class="field-box">0</div>
+                        <div class="field-box">0</div>
+                    </div>
+                </div>
+                <div style="font-size: 10px; text-align: center;">(наименование налогового органа)
+                </div>
+
+                <div class="form-row" style="margin-top: 15px;">
+                    <span class="checkBoxTitleFirst" style="font-size: 10px;">физическим лицом,
+                        получившим доходы от
+                        налоговых агентов </span>
+                    <div class="checkbox-1"></div>
+                    <span class="checkBoxTitleFirst" style="font-size: 10px;">физическим лицом,
+                        зарегистрированным в
+                        качестве индивидуального
+                        предпринимателя </span>
+                    <div class="checkbox-1"></div>
+                    <span class="checkBoxTitleFirst" style="font-size: 10px;">нотариусом,
+                        занимающимся
+                        частной практикой</span>
+                    <div class="checkbox-1"></div>
+                    <span class="checkBoxTitleFirst" style="font-size: 10px;">адвокатом,
+                        учредившим
+                        адвокатский
+                        кабинет </span>
+                    <div class="checkbox-1"></div>
+                    <span class="checkBoxTitleFirst" style="font-size: 10px;">иностранным
+                        физическим
+                        лицом</span>
+                    <div class="checkbox-1"></div>
+                    <span class="checkBoxTitleFirst" style="font-size: 10px;">иным
+                        физическим
+                        лицом</span>
+                    <div class="checkbox-1"></div>
+                </div>
+            </div>
+
+            <!-- Name section -->
+            <div class="name-section">
+                <div class="name-row">
+                    <span class="name-label">Фамилия</span>
+                    <div class="name-boxes">
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                    </div>
+                </div>
+
+                <div class="name-row">
+                    <span class="name-label">Имя</span>
+                    <div class="name-boxes">
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                    </div>
+                </div>
+
+                <div class="name-row">
+                    <span class="name-label">Отчество</span>
+                    <div class="name-boxes">
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                        <div class="field-box-fio"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gender -->
+            <div class="gender-section">
+                <span class="pol-text">Пол</span>
+                <div style="display: flex; align-items: center;">
+                    <span class="maleFemale">Муж</span>
+                    <div class="pol">V</div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="maleFemale">Жен</span>
+                    <div class="pol">V</div>
+                </div>
+                <span style="font-size: 10px;">(нужное отметить знаком V)</span>
+            </div>
+
+            <!-- Country -->
+            <div class="country-section">
+                <div class="form-row">
+                    <span class="citizenship">Гражданство</span>
+                    <div class="underline" style="width: 300px;">Российская Федерация</div>
+                    <span class="codeOfCountryText">Код страны</span>
+                    <div class="field-boxes">
+                        <div class="field-box">6</div>
+                        <div class="field-box">4</div>
+                        <div class="field-box">3</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Declaration -->
+            <div class="declaration-section">
+                <div class="declaration-text">
+                    <span class="deklSostavlena">Данная декларация составлена на</span>
+                    <div class="field-boxes" style="display: inline-flex; margin: 0 10px;">
+                        <div class="field-box-slim"></div>
+                        <div class="field-box-slim"></div>
+                        <div class="field-box-slim">2</div>
+                    </div>
+                    <span class="deklSostavlena">страницах</span>
+                </div>
+
+                <div class="declaration-text-2" style="text-align: center;">
+                    <div class="underline" style="width: 100%; margin: 0px 0;"></div>
+                </div>
+
+                <div class="declaration-options">
+                    <div class="declaration-option">
+                        <strong style="font-size: 13px;" class="dostovernost">Достоверность и полноту сведений,<br>
+                            указанных на данной странице, подтверждаю:</strong>
+                    </div>
+
+                    <div class="bottomRightSideUp">
+                        <div style="margin-top: 10px;">
+                            <span style="font-size: 13px; font-weight: bold;">Заполняется работником налогового
+                                органа</span>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <span style="font-size: 13px;">Сведения о представлении налоговой декларации</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Signatures -->
+            <div class="signature-section">
+                <div class="signature-left">
+                    <div class="form-row">
+                        <span style="font-size: 13px;">лично</span>
+                        <div class="checkbox-2"></div>
+                        <span style="font-size: 13px;">законный представитель</span>
+                        <div class="checkbox-2 checked"></div>
+                    </div>
+                    <div style="font-size: 10px; margin-top: 5px; margin-left: 90px;">(нужное отметить знаком V)</div>
+
+                    <div style=" margin-top: 10px; display: flex; align-items: center; gap: 10px;" class="rospis-block">
+                        <div style="font-size: 10px;">Подпись</div>
+                        <img style="width: 170px;" src="./rospis20.png" alt="">
+                    </div>
+
+
+                    <div class="date-section">
+                        <span style="font-size: 13px; margin-right: 40px;">Дата</span>
+                        <div class="field-boxes">
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                        </div>
+                        <div style="margin: 0 7px;" class="field-boxes">
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                        </div>
+                        <div class="field-boxes">
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="signature-right">
+                    <div style="font-size: 13px;">Данная декларация представлена (нужное отметить знаком V)</div>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <span style="font-size: 13px; margin-bottom: 15px">лично</span>
+                        <div class="checkbox-2"></div>
+                        <span style="font-size: 13px; width: 70px; margin-bottom: 15px">по почте</span>
+                        <div class="checkbox-2"></div>
+                        <span style="font-size: 13px; text-align: right; margin-bottom: 10px">уполномоченным (законным)
+                            представителем</span>
+                        <div class="checkbox-2 checked"></div>
+                    </div>
+
+                    <div style="margin-top: 30px; margin-top: 40px;">
+                        <span>на</span>
+                        <div class="field-boxes" style="display: inline-flex; margin: 0 10px;">
+                            <div class="field-box" style="margin-left: 40px;"></div>
+                            <div class="field-box"></div>
+                            <div class="field-box" style="margin-right: 40px;">2</div>
+                        </div>
+                        <span>Страницах</span>
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <span style="font-size: 13px;">с приложением подтверждающих документов на</span>
+                        <div class="field-boxes" style="display: inline-flex; margin: 0;">
+                            <div class="field-box" style="margin-left: 10px;"></div>
+                            <div class="field-box"></div>
+                            <div class="field-box" style="margin-right: 10px;">2</div>
+                        </div>
+                        <span style="font-size: 13px;">листах</span>
+                    </div>
+
+                    <div class="date-section">
+                        <span style="font-size: 13px; margin-right: 10px;">Дата представления декларации</span>
+                        <div class="field-boxes">
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" style="width: 22px;"
+                                class="field-box">0
+                            </div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" style="width: 22px;"
+                                class="field-box">0
+                            </div>
+                        </div>
+                        <div class="field-boxes">
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                        </div>
+                        <div class="field-boxes">
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">0</div>
+                        </div>
+                    </div>
+
+                    <div class="registration-number">
+                        <span style="font-size: 13px; margin-right: 60px;">Зарегистрирована за №</span>
+                        <div class="field-boxes">
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">1</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">2</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">8</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">7</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">6</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">4</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">2</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">1</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">1</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">2</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">3</div>
+                            <div style="max-width: 15px; height: 28px; font-size: 13px;" class="field-box">9</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom signatures -->
+            <div class="bottom-signatures">
+                <img style="width: 150px;" src="./rospis.png" alt="">
+                <div style="font-size: 10px; text-align: center;">Подпись</div>
+            </div>
+        </div>
+
+        <div class="right-border"></div>
+
+        <div class="middle-border"></div>
+
+        <div class="blackCorner blackCorner-leftB"></div>
+        <div class="blackCorner blackCorner-rigthB"></div>
+        <div class="blackCorner blackCorner-leftU"></div>
+        <div class="blackCorner blackCorner-rightU"></div>
+    </div>
+
+    <div class="doc2" id="doc2">
+
+        <div class="document-container" id="document2">
+            <div class="header">
+                <img style="width: 100px; margin-left: 20px;" src="./Screenshot_2.png" alt="">
+                <div class="page-info">
+                    <span class="srt">Стр.</span>
+                    <div class="page-number">
+                        <div class="digit-box">0</div>
+                        <div class="digit-box">0</div>
+                        <div class="digit-box">2</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-title">Форма по КНД 1151020</div>
+
+
+            <div class="page">
+
+                <!-- Фамилия Header -->
+                <div class="header-row">
+                    <span class="header-label">Фамилия</span>
+                    <div class="letter-cells">
+                        <!-- НААПЕТЯН — 8 letters -->
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <!-- empty cells -->
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                        <div class="letter-cell"></div>
+                    </div>
+                    <div class="initials-block">
+                        <span class="initials-label">И.</span>
+
+                        <div class="initials-cell" id="initName"></div>
+
+                        <span class="initials-label">О.</span>
+                        <div class="initials-cell" id="initMiddle"></div>
+                    </div>
+                </div>
+
+                <!-- Section Title -->
+                <div class="section-title">
+                    Раздел 1. Расчет налоговой базы и суммы налога по доходам, в частности выигрышам, облагаемым по<br>
+                    ставке <span class="rate-large">7,5 %</span>
+                </div>
+
+                <!-- Main Table -->
+                <table class="main">
+                    <colgroup>
+                        <col style="width:38px">
+                        <col>
+                        <col style="width:40px">
+                        <col style="width:255px">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="th-header col-num">№<br>п/п</th>
+                            <th class="th-header col-desc">Показатели</th>
+                            <th class="th-header col-code">Код<br>строки</th>
+                            <th class="th-header col-val">Значение показателей<br>(руб., коп.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Section I -->
+                        <tr>
+                            <td colspan="4" class="section-sub">I Расчет общей суммы дохода, подлежащего налогообложению
+                                по ставке 7,5%
+                            </td>
+                        </tr>
+
+                        <!-- Row 1 -->
+                        <tr>
+                            <td class="row-num">1</td>
+                            <td>
+                                <span class="desc-main">Общая сумма дохода</span>
+                                <span class="desc-sub">(пп.2.1 Листа А + пп.2.1 Листа Б + пп.3.1 Листа В)</span>
+                            </td>
+                            <td class="col-code">010</td>
+                            <td class="val-cell changeSum">200 000 рублей 0 копеек</td>
+                        </tr>
+
+                        <!-- Row 2 -->
+                        <tr>
+                            <td class="row-num">2</td>
+                            <td>
+                                <span class="desc-main">Общая сумма дохода, не подлежащего налогообложению
+                                    (пп.1.7</span>
+                                <span class="desc-sub">Листа Г)</span>
+                            </td>
+                            <td class="col-code">020</td>
+                            <td class="val-cell">0 рублей 0 копеек</td>
+                        </tr>
+
+                        <!-- Row 3 -->
+                        <tr>
+                            <td class="row-num">3</td>
+                            <td>
+                                <span class="desc-main">Общая сумма дохода, подлежащего налогообложению (Вычтите</span>
+                                <span class="desc-sub">строку 020 из строки 010)</span>
+                            </td>
+                            <td class="col-code">030</td>
+                            <td class="val-cell changeSum">200 000 рублей 0 копеек</td>
+                        </tr>
+
+                        <!-- Section II -->
+                        <tr>
+                            <td colspan="4" class="section-sub">II Сумма расходов и налоговых вычетов, уменьшающих
+                                налоговую базу</td>
+                        </tr>
+
+                        <!-- Row 4 -->
+                        <tr>
+                            <td class="row-num">4</td>
+                            <td>
+                                <span class="desc-main">Общая сумма расходов и налоговых вычетов</span>
+                                <span class="desc-sub">(пп.3.2 Листа В+ пп.2.2 Листа Д+ пп.2.2 Листа Е+ пп.1.9 Листа Ж +
+                                    пп.2.3 Листа Ж+ пп.4.3 Листа 3 + пп.4.3 Листа И+ пп.2.8 Листа К+ пп.3.6
+                                    Листа К+ пп.2.5 Листа Л + пп.2.6 Листа Л + пп.2.8 Листа Л + пп.2.9
+                                    Листа Л)</span>
+                            </td>
+                            <td class="col-code">040</td>
+                            <td class="val-cell">0 рублей 0 копеек</td>
+                        </tr>
+
+                        <!-- Section III -->
+                        <tr>
+                            <td colspan="4" class="section-sub">III Расчет налоговой базы</td>
+                        </tr>
+
+                        <!-- Row 5 -->
+                        <tr>
+                            <td class="row-num">5</td>
+                            <td>
+                                <span class="desc-main">Налоговая база</span>
+                                <span class="desc-sub">(Вычтите строку 040 из строки 030. Если результат получился
+                                    отрицательным, то по данной строке ставится прочерк)</span>
+                            </td>
+                            <td class="col-code">050</td>
+                            <td class="val-cell changeSum">200 000 рублей 0 копеек</td>
+                        </tr>
+
+                        <!-- Section IV -->
+                        <tr>
+                            <td colspan="4" class="section-sub">IV Расчет итоговой суммы налога, подлежащей к уплате
+                                (доплате) / возврату
+                            </td>
+                        </tr>
+
+                        <!-- Row 6 -->
+                        <tr>
+                            <td class="row-num">6</td>
+                            <td>
+                                <span style="font-weight: bold;" class="desc-main">Сумма налога, исчисленного к
+                                    уплате</span>
+                                <span class="desc-sub">(Умножьте значение строки 050 на 0,075)</span>
+                            </td>
+                            <td class="col-code">060</td>
+                            <td class="val-cell">15 000 рублей 0 копеек</td>
+                        </tr>
+
+                        <!-- Row 7 -->
+                        <tr>
+                            <td class="row-num">7</td>
+                            <td>
+                                <span style="font-weight: bold;" class="desc-main">Общая сумма налога, уплаченного у
+                                    источника выплаты и
+                                    уплаченного в виде авансовых
+                                    платежей</span>
+                                <span class="desc-sub">(пп.2.4 Листа А +пп.3.4 Листа В)</span>
+                            </td>
+                            <td class="col-code">070</td>
+                            <td class="val-cell">0 рублей 0 копеек</td>
+                        </tr>
+
+                        <!-- Row 8 -->
+                        <tr>
+                            <td class="row-num">8</td>
+                            <td>
+                                <span style="font-weight: bold;" class="desc-main">Общая сумма налога, уплаченного на
+                                    основании налогового
+                                    уведомления на уплату налога
+                                    на доходы физических лиц, а также уплаченного налогоплательщиком
+                                    самостоятельно</span>
+                            </td>
+                            <td class="col-code">080</td>
+                            <td class="val-cell">0 рублей 0 копеек</td>
+                        </tr>
+
+                        <!-- Row 9 -->
+                        <tr>
+                            <td class="row-num">9</td>
+                            <td>
+                                <span style="font-weight: bold;" class="desc-main">Сумма налога, уплаченная в
+                                    иностранных государствах, подлежащая
+                                    зачету в Российской
+                                    Федерации</span>
+                                <span class="desc-sub">(пп.2.4 Листа Б)</span>
+                            </td>
+                            <td class="col-code">090</td>
+                            <td class="val-cell">0 рублей 0 копеек</td>
+                        </tr>
+
+                        <!-- Row 10 -->
+                        <tr>
+                            <td class="row-num">10</td>
+                            <td>
+                                <span style="font-weight: bold;" class="desc-main">Сумма налога, подлежащая возврату из
+                                    бюджета</span>
+                                <span class="desc-sub">(Вычтите строку 060 из суммы строк 070 и 080. Если значение
+                                    строки
+                                    060 больше или равно сумме строк 070 и 080, то в строке 100 ставится прочерк)</span>
+                            </td>
+                            <td class="col-code">100</td>
+                            <td class="val-cell">0 рублей 0 копеек</td>
+                        </tr>
+
+                        <!-- Row 11 -->
+                        <tr>
+                            <td class="row-num">11</td>
+                            <td>
+                                <span style="font-weight: bold;" class="desc-main">Сумма налога, подлежащая к уплате
+                                    (доплате) в бюджет</span>
+                                <span class="desc-sub">(Вычтите сумму строк 070, 080 и 090 из строки 060. Если значение
+                                    строки 060 меньше суммы строк 070, 080 и 090, то в строке 110 ставится
+                                    прочерк)</span>
+                            </td>
+                            <td class="col-code">110</td>
+                            <td class="val-cell">15 000 рублей 0 копеек</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <div class="bottom-part">
+            <span style="margin-right: 20px;" class="bottom-part-text">Подпись</span>
+            <img style="width: 250px;" src="./Rospis20.png" alt="">
+            <span style="margin-right: 50px;" class="bottom-part-text">Дата</span>
+            <div class="field-boxes">
+                <div style="min-width: 15px; height: 28px; font-size: 18px;" class="field-box">0</div>
+                <div style="min-width: 15px; height: 28px; font-size: 18px;" class="field-box">0</div>
+            </div>
+            <div style="margin: 0 7px;" class="field-boxes">
+                <div style="min-width: 20px; height: 28px; font-size: 18px;" class="field-box">0</div>
+                <div style="min-width: 20px; height: 28px; font-size: 18px;" class="field-box">0</div>
+            </div>
+            <div class="field-boxes">
+                <div style="min-width: 15px; height: 28px; font-size: 18px;" class="field-box">0</div>
+                <div style="min-width: 15px; height: 28px; font-size: 18px;" class="field-box">0</div>
+                <div style="min-width: 15px; height: 28px; font-size: 18px;" class="field-box">0</div>
+                <div style="min-width: 15px; height: 28px; font-size: 18px;" class="field-box">0</div>
+            </div>
+        </div>
+
+        <div class="right-border"></div>
+
+        <div class="blackCorner blackCorner-leftB"></div>
+        <div class="blackCorner blackCorner-rigthB"></div>
+        <div class="blackCorner blackCorner-leftU"></div>
+        <div class="blackCorner blackCorner-rightU"></div>
+    </div>
+
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+
+        function formatMoney(value) {
+            const num = value.replace(/\D/g, '');
+
+            if (!num) return '';
+
+            const formatted = Number(num).toLocaleString('ru-RU');
+
+            return `${formatted} рублей 0 копеек`;
+        }
+
+        document.getElementById('sum').addEventListener('input', (e) => {
+            const result = formatMoney(e.target.value);
+
+            document.querySelectorAll('.changeSum').forEach(el => {
+                el.textContent = result;
+            });
+        });
+
+
+        function fillInitials() {
+            const name = document.getElementById('firstName').value.trim();
+            const middle = document.getElementById('middleName').value.trim();
+
+            const initName = document.getElementById('initName');
+            const initMiddle = document.getElementById('initMiddle');
+
+            initName.textContent = name ? name[0].toUpperCase() : '';
+            initMiddle.textContent = middle ? middle[0].toUpperCase() : '';
+        }
+
+        document.getElementById('firstName').addEventListener('input', fillInitials);
+        document.getElementById('middleName').addEventListener('input', fillInitials);
+
+        function setCopiedState(button, success = true) {
+            const originalText = button.dataset.originalText || button.textContent;
+            button.dataset.originalText = originalText;
+
+            const newText = success ? 'Скопировано' : 'Ошибка';
+
+            const span = button.querySelector('span');
+
+            // если span ещё нет — оборачиваем текст
+            if (!span) {
+                button.innerHTML = `<span>${originalText}</span>`;
+            }
+
+            const textSpan = button.querySelector('span');
+
+            // запуск анимации исчезновения
+            button.classList.add('changing');
+
+            setTimeout(() => {
+                textSpan.textContent = newText;
+
+                if (success) {
+                    button.classList.add('copied');
+                }
+
+                // появление обратно
+                requestAnimationFrame(() => {
+                    button.classList.remove('changing');
+                });
+
+                // возврат обратно
+                setTimeout(() => {
+                    textSpan.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 1200);
+
+            }, 200);
+        }
+
+        function copyDocument(elementId, button) {
+            const element = document.getElementById(elementId);
+
+            html2canvas(element, {
+                scale: 2,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+
+                canvas.toBlob(blob => {
+                    if (!blob) {
+                        setCopiedState(button, false);
+                        return;
+                    }
+
+                    const item = new ClipboardItem({ 'image/png': blob });
+
+                    navigator.clipboard.write([item])
+                        .then(() => setCopiedState(button, true))
+                        .catch(err => {
+                            console.error('Ошибка при копировании:', err);
+                            setCopiedState(button, false);
+                        });
+                });
+
+            }).catch(err => {
+                console.error('html2canvas error:', err);
+                setCopiedState(button, false);
+            });
+        }
+
+        function copyDocument1(e) {
+            copyDocument('doc', e.currentTarget);
+        }
+
+        function copyDocument2(e) {
+            copyDocument('doc2', e.currentTarget);
+        }
+
+        // ===== УТИЛИТЫ =====
+        function fillBoxes(selector, text) {
+            const boxes = document.querySelectorAll(selector);
+            const chars = text.toUpperCase().replace(/[^А-ЯA-Z]/g, '').split('');
+
+            boxes.forEach((box, i) => {
+                box.textContent = chars[i] || '';
+            });
+        }
+
+        function fillDate(selector, value) {
+            const digits = value.replace(/\D/g, '').split('');
+            const boxes = document.querySelectorAll(selector);
+
+            boxes.forEach((box, i) => {
+                box.textContent = digits[i] || '';
+            });
+        }
+
+        // ===== ФИО =====
+        document.getElementById('lastName').addEventListener('input', e => {
+            fillBoxes('.name-section .name-row:nth-child(1) .field-box-fio', e.target.value);
+        });
+
+        document.getElementById('firstName').addEventListener('input', e => {
+            fillBoxes('.name-section .name-row:nth-child(2) .field-box-fio', e.target.value);
+        });
+
+        document.getElementById('middleName').addEventListener('input', e => {
+            fillBoxes('.name-section .name-row:nth-child(3) .field-box-fio', e.target.value);
+        });
+
+        document.getElementById('lastName').addEventListener('input', e => {
+            fillBoxes('.letter-cell', e.target.value);
+        });
+
+        document.getElementById('date').addEventListener('input', e => {
+            fillDate('.bottom-part .field-box', e.target.value);
+        });
+
+        // ===== ПОЛ =====
+        const male = document.getElementById('male');
+        const female = document.getElementById('female');
+
+        male.addEventListener('change', () => {
+            if (male.checked) female.checked = false;
+
+            const boxes = document.querySelectorAll('.pol');
+            boxes[0].textContent = male.checked ? 'V' : '';
+            boxes[1].textContent = '';
+        });
+
+        female.addEventListener('change', () => {
+            if (female.checked) male.checked = false;
+
+            const boxes = document.querySelectorAll('.pol');
+            boxes[1].textContent = female.checked ? 'V' : '';
+            boxes[0].textContent = '';
+        });
+
+        // ===== МАСКА ДАТЫ =====
+        function formatDateInput(input) {
+            input.addEventListener('input', e => {
+                let value = e.target.value.replace(/\D/g, '').slice(0, 8);
+
+                if (value.length >= 5) {
+                    value = value.replace(/(\d{2})(\d{2})(\d+)/, '$1.$2.$3');
+                } else if (value.length >= 3) {
+                    value = value.replace(/(\d{2})(\d+)/, '$1.$2');
+                }
+
+                e.target.value = value;
+            });
+        }
+
+        formatDateInput(document.getElementById('date'));
+        formatDateInput(document.getElementById('date2'));
+
+        // ===== ВСТАВКА ДАТ =====
+        document.getElementById('date').addEventListener('input', e => {
+            fillDate('.signature-left .date-section .field-box', e.target.value);
+        });
+
+        document.getElementById('date2').addEventListener('input', e => {
+            fillDate('.signature-right .date-section .field-box', e.target.value);
+        });
+
+        function transliterate(text) {
+            const map = {
+                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+                'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+                'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+                'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+                'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+                'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo',
+                'Ж': 'Zh', 'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M',
+                'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U',
+                'Ф': 'F', 'Х': 'H', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Sch',
+                'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya'
+            };
+            return text.replace(/[а-яё]/gi, char => map[char] || char);
+        }
+
+        async function saveToPDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+
+            // Первый документ - первая страница
+            const doc1 = document.getElementById('doc');
+            const canvas1 = await html2canvas(doc1, {
+                scale: 2,
+                backgroundColor: '#ffffff'
+            });
+
+            const imgData1 = canvas1.toDataURL('image/png');
+            pdf.addImage(imgData1, 'PNG', 0, 0, 210, 297);
+
+            // Добавляем новую страницу
+            pdf.addPage();
+
+            // Второй документ - вторая страница
+            const doc2 = document.getElementById('doc2');
+            const canvas2 = await html2canvas(doc2, {
+                scale: 2,
+                backgroundColor: '#ffffff'
+            });
+
+            const imgData2 = canvas2.toDataURL('image/png');
+            pdf.addImage(imgData2, 'PNG', 0, 0, 210, 297);
+
+            // Формируем имя файла из инпутов
+            const lastName = transliterate(document.getElementById('lastName').value.trim() || 'Unknown');
+            const firstName = transliterate(document.getElementById('firstName').value.trim() || 'Unknown');
+            const middleName = transliterate(document.getElementById('middleName').value.trim() || 'Unknown');
+
+            const fileName = `decl.${lastName} ${firstName} ${middleName}.pdf`;
+
+            // Сохраняем PDF
+            pdf.save(fileName);
+        }
+    </script>
+</body>
+
+</html>

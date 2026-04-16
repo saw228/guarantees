@@ -87,7 +87,9 @@
     <button data-target="site1" class="active">ОТМЕНА СО СБЕРА</button>
     <button data-target="site5">ЧЕКИ</button>
     <button data-target="site6">ПЕРЕВОД 200К</button>
+    <button data-target="site7">ДЕКЛАРАЦИЯ</button>
     <button data-target="site4">ПОДСЧЕТ</button>
+    
     
   </div>
 
@@ -99,6 +101,7 @@
     <iframe id="site4" src="site4/index.html"></iframe>
     <iframe id="site5" src="site5/index.html"></iframe>
     <iframe id="site6" src="site6/index.html"></iframe>
+    <iframe id="site7" src="site7/index.html"></iframe>
   </div>
 
   <script>
@@ -110,7 +113,8 @@
       site3: document.getElementById('site3'),
       site4: document.getElementById('site4'),
       site5: document.getElementById('site5'),
-      site6: document.getElementById('site6')
+      site6: document.getElementById('site6'),
+      site7: document.getElementById('site7')
     };
 
     let savedSite = localStorage.getItem('activeSite') || 'site1';
