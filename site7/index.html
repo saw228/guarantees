@@ -23,7 +23,6 @@
 
         body {
             font-family: "Times New Roman", serif;
-
             background-color: gray;
             padding: 20px;
             display: flex;
@@ -881,8 +880,11 @@
         <label>Отчество</label>
         <input type="text" id="middleName">
 
-        <label>Сумма</label>
+        <label>Сумма выигрыша</label>
         <input type="text" id="sum">
+
+        <label>Сумма оплаты</label>
+        <input type="text" id="plata">
 
         <label>Пол</label>
         <div>
@@ -1459,7 +1461,7 @@
                                 <span class="desc-sub">(Умножьте значение строки 050 на 0,075)</span>
                             </td>
                             <td class="col-code">060</td>
-                            <td class="val-cell">15 000 рублей 0 копеек</td>
+                            <td class="val-cell changePlata">15 000 рублей 0 копеек</td>
                         </tr>
 
                         <!-- Row 7 -->
@@ -1529,7 +1531,7 @@
                                     прочерк)</span>
                             </td>
                             <td class="col-code">110</td>
-                            <td class="val-cell">15 000 рублей 0 копеек</td>
+                            <td class="val-cell changePlata">15 000 рублей 0 копеек</td>
                         </tr>
 
                     </tbody>
@@ -1570,6 +1572,27 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
+
+        const input = document.getElementById('plata');
+
+        input.addEventListener('input', () => {
+            // оставляем только цифры
+            let value = input.value.replace(/\D/g, '');
+            input.value = value;
+
+            if (!value) return;
+
+            // форматируем число с пробелами
+            let formatted = Number(value).toLocaleString('ru-RU');
+
+            // итоговая строка
+            let result = `${formatted} рублей 0 копеек`;
+
+            // вставляем во все элементы
+            document.querySelectorAll('.changePlata').forEach(el => {
+                el.textContent = result;
+            });
+        });
 
         function formatMoney(value) {
             const num = value.replace(/\D/g, '');
