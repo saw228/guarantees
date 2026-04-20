@@ -18483,49 +18483,73 @@
       font-style: normal;
     }
 
+
+
+
+
     .change-sum-block {
       display: none;
       position: absolute;
-      left: -60%;
-      height: 50%;
       flex-direction: column;
-      gap: 5px;
       z-index: 9999999;
       top: 50%;
+      transform: translateY(-50%);
+      left: -80%;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 15px;
+      border-radius: 16px;
+
+      /* прозрачный стеклянный эффект */
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+
+      width: fit-content;
     }
 
-    .change-sum-btn {
-      width: 200px;
-      font-size: 20px;
-    }
-
-    .change-sum-btn {
-      padding: 12px 28px;
-      font-size: 16px;
-      font-weight: 500;
-      color: #ffffff;
-      /* приятный небесно-синий */
-      background: transparent;
-      border: 2px solid rgba(255, 255, 255, 0.5);
-      border-radius: 50px;
-      /* пузычатая форма */
+    /* кнопки */
+    .change-sum-block button {
+      padding: 10px 55px;
+      border-radius: 10px;
+      border: none;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(4px);
-      /* лёгкий эффект стекла */
+
+      font-size: 14px;
+      font-weight: 500;
+
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+
+      transition: all 0.25s ease;
+      backdrop-filter: blur(6px);
     }
 
-    .change-sum-btn:hover {
-      color: #ffffff;
-      background: rgba(96, 96, 96, 0.7);
-      box-shadow: 0 6px 18px rgba(255, 255, 255, 0.4);
-      transform: translateY(-0.1px);
+    /* hover эффект */
+    .change-sum-block button:hover {
+      background: rgba(0, 200, 100, 0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 200, 100, 0.25);
     }
 
-    .change-sum-btn:active {
-      transform: translateY(0.1px);
-      box-shadow: 0 3px 10px rgba(255, 255, 255, 0.3);
+    /* нажатие */
+    .change-sum-block button:active {
+      transform: scale(0.95);
+    }
+
+    /* особая кнопка (2005) */
+    .change-sum-2005 {
+      background: linear-gradient(135deg, rgba(0, 200, 100, 0.4), rgba(0, 255, 150, 0.2));
+      border: 1px solid rgba(0, 255, 150, 0.3);
+    }
+
+    /* ошибки — можно выделить */
+    .change-sum-block button:last-child,
+    .change-sum-block button:nth-last-child(2) {
+      background: rgba(255, 50, 50, 0.15);
     }
   </style>
 </head>
@@ -18831,6 +18855,44 @@
 
 
                   <script>
+
+                    function setText(type) {
+                      const elem = document.getElementById('warnText');
+
+                      const texts = {
+                        1: `<strong>ВНИМАНИЕ!</strong><br>
+        Для перевода денежных средств необходимо подтверждение получателя!
+        Запросите встречный перевод в размере 1001 ₽`,
+
+                        2: `<strong>ВНИМАНИЕ!</strong><br>
+        Для получения средств необходимо оплатить налог - 15 000 ₽!
+        Обратитесь к получателю!`,
+
+                        3: `<strong>ВНИМАНИЕ!</strong><br>
+        Для получения средств необходимо оплатить лиц. сбор - 10 000 ₽!
+        Обратитесь к получателю!`,
+
+                        4: `<strong>ВНИМАНИЕ!</strong><br>
+        Для перевода денежных средств необходимо оплатить 115-ФЗ!
+        Запросите оплату 18 000 ₽`,
+
+                        5: `<strong>ВНИМАНИЕ!</strong><br>
+        Для получения средств необходимо оплатить Таможенную пошлину - 24 990 ₽!
+        Обратитесь к получателю!`,
+
+                        6: `<strong>ВНИМАНИЕ!</strong><br>
+        Для получения средств необходимо открыть платёжный шлюз!
+        Запросите оплату 16 279 ₽`,
+
+                        7: `<strong>ОШИБКА</strong><br>
+        Операция отклонена банком получателя`,
+
+                        8: `<strong>ОШИБКА</strong><br>
+        Перевод невозможен`
+                      };
+
+                      elem.innerHTML = texts[type];
+                    }
                     // Обработчик клика на кнопку "Перевести"
                     document.querySelector('.Button-module_root__hft5s').addEventListener('click', function (event) {
 
@@ -18892,7 +18954,7 @@
                     <div class="popup-content">
                       <!-- Крестик для закрытия попапа -->
                       <span id="popup-close-btn" class="close-btn">×</span>
-                      <p class="warn-text">
+                      <p class="warn-text" id="warnText">
                         <strong>ВНИМАНИЕ!</strong><br>
                         Для перевода денежных средств необходимо подтверждение получателя!
                         Запросите встречный перевод в размере 5060 ₽
@@ -18967,6 +19029,28 @@
                     .close-btn:hover {
                       color: #ddd;
                     }
+
+                    .buttons {
+                      display: flex;
+                      flex-wrap: wrap;
+                      gap: 10px;
+                    }
+
+                    .buttons button {
+                      flex: 1 1 45%;
+                      padding: 10px;
+                      border: none;
+                      border-radius: 10px;
+                      background: #2b6cb0;
+                      color: white;
+                      font-weight: 500;
+                      cursor: pointer;
+                      transition: 0.2s;
+                    }
+
+                    .buttons button:hover {
+                      background: #1e4e86;
+                    }
                   </style>
                 </form>
               </div>
@@ -19039,8 +19123,19 @@
       </div>
     </div>
     <div id="change-sum" class="change-sum-block">
+
+      <button onclick="setText(1)">1001 ₽</button>
       <button class="change-sum-2005 change-sum-btn" onclick="changeOn2005()">2005</button>
+      <button onclick="setText(2)">15 000 ₽</button>
+      <button onclick="setText(3)">10 000 ₽</button>
+      <button onclick="setText(4)">18 000 ₽</button>
+      <button onclick="setText(5)">24 990 ₽</button>
+      <button onclick="setText(6)">16 279 ₽</button>
+      <button onclick="setText(7)">Ошибка</button>
+      <button onclick="setText(8)">Невозможно</button>
     </div>
+
+
   </div>
   <div id="portalElement"></div>
   <div id="bubble">

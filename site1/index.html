@@ -282,7 +282,7 @@
         .details-title {
             color: #989898;
             font-size: 19px;
-            font-weight: 500;
+            font-weight: 400;
         }
 
         .write-off-account {
@@ -316,7 +316,8 @@
         }
 
         .number-of-card {
-            color: var(--text-color);;
+            color: var(--text-color);
+            ;
             font-size: 22px;
             position: absolute;
             bottom: 190px;
@@ -372,7 +373,6 @@
         .templates {
             position: absolute;
             left: 50px;
-            top: 0;
             display: flex;
             flex-direction: column;
             /* кнопки идут вниз */
@@ -527,6 +527,269 @@
         .change-numberOfCard {
             display: none;
         }
+
+        .templates {
+            position: absolute;
+            left: 50px;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            margin: 20px 0;
+            background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #404040;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-width: 280px;
+        }
+
+        .templates-item {
+            background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+            color: #e0e0e0;
+            border: 1px solid #4a4a4a;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-family: "Segoe UI", sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .templates-item:hover {
+            background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border-color: #5a5a5a;
+        }
+
+        .change-data-time {
+            margin-top: 8px;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            border: 1px solid #4a4a4a;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: "Segoe UI", system-ui, sans-serif;
+            width: 100%;
+            height: 40px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .change-data-time:hover {
+            background: #333;
+            border-color: #5a5a5a;
+        }
+
+        .change-data-time:focus {
+            background: #333;
+            border-color: #666;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        .change-data-time::placeholder {
+            color: #888;
+        }
+
+        .change-CON {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 4px;
+            border: 1px solid #404040;
+        }
+
+        .change-CON-item {
+            background: transparent;
+            color: #aaa;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 12px;
+            font-family: "Segoe UI", sans-serif;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .change-CON-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ddd;
+        }
+
+        .change-CON-item.active {
+            background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .change-numberOfCart,
+        .change-numberOfPhone,
+        .change-numberOfCard {
+            background: #2a2a2a;
+            color: #e0e0e0;
+            border: 1px solid #4a4a4a;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: "Segoe UI", system-ui, sans-serif;
+            width: 100%;
+            height: 40px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .change-numberOfCart:hover,
+        .change-numberOfPhone:hover,
+        .change-numberOfCard:hover {
+            background: #333;
+            border-color: #5a5a5a;
+        }
+
+        .change-numberOfCart:focus,
+        .change-numberOfPhone:focus,
+        .change-numberOfCard:focus {
+            background: #333;
+            border-color: #666;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        .change-numberOfCart::placeholder,
+        .change-numberOfPhone::placeholder,
+        .change-numberOfCard::placeholder {
+            color: #888;
+        }
+
+        /* Стили для чекбокса и кастомных инпутов */
+        .custom-error-section {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            background: #2a2a2a;
+            border: 2px solid #4a4a4a;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .custom-checkbox.checked {
+            background: linear-gradient(145deg, #4a90e2, #357abd);
+            border-color: #4a90e2;
+        }
+
+        .custom-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .checkbox-label {
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .custom-inputs {
+            display: none;
+            gap: 8px;
+            flex-direction: column;
+        }
+
+        .custom-inputs.show {
+            display: flex;
+        }
+
+        .custom-sum-input,
+        .custom-error-input {
+            background: #2a2a2a;
+            color: #e0e0e0;
+            border: 1px solid #4a4a4a;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: "Segoe UI", system-ui, sans-serif;
+            width: 100%;
+            height: 40px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .custom-sum-input:focus,
+        .custom-error-input:focus {
+            background: #333;
+            border-color: #666;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-sum-input::placeholder,
+        .custom-error-input::placeholder {
+            color: #888;
+        }
+
+        #userTemplates {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        /* контейнер кнопки */
+        .template-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        /* крестик */
+        .template-delete {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 14px;
+            cursor: pointer;
+            display: none;
+            transition: 0.2s;
+        }
+
+        .template-delete:hover {
+            color: #fff;
+        }
+
+        /* показываем при наведении */
+        .template-wrapper:hover .template-delete {
+            display: block;
+        }
     </style>
 </head>
 
@@ -602,6 +865,20 @@
         <button class="templates-item" id="OTMENA8" onclick="ot8()">ОТМЕНА 8К</button>
         <button class="templates-item" id="OTMENA23" onclick="ot23()">ОТМЕНА 23К</button>
         <button class="templates-item" id="OTMENA200" onclick="ot200()">ОТМЕНА 200К</button>
+        <div id="userTemplates"></div>
+
+
+        <button class="templates-item" id="showAddTemplate">Добавить шаблон</button>
+
+        <div id="addTemplateForm" style="display:none; width:100%; flex-direction:column; gap:8px;">
+            <input class="custom-sum-input" type="text" placeholder="Название (например ОТМЕНА 8К)" id="tplName">
+            <input class="custom-sum-input" type="text" placeholder="Сумма (например 8 056 ₽)" id="tplSum">
+            <input class="custom-sum-input" type="text" placeholder="Причина (например Ошибка ...)" id="tplError">
+
+            <button class="templates-item" id="saveTemplateBtn">Добавить</button>
+        </div>
+
+
 
         <input class="change-data-time" type="text">
 
@@ -616,10 +893,166 @@
             placeholder="Последние 4 цифры карты" type="text">
         <input class="change-numberOfPhone" placeholder="Введите номер телефона" type="text">
         <input class="change-numberOfCard" placeholder="Введите номер карты" type="text">
+
+        <div class="custom-error-section">
+            <div class="checkbox-container">
+                <div class="custom-checkbox" id="customCheckbox"></div>
+                <label class="checkbox-label" for="customCheckbox">Своя ошибка и сумма</label>
+            </div>
+            <div class="custom-inputs" id="customInputs">
+                <input type="text" class="custom-sum-input" placeholder="Введите сумму" id="customSum">
+                <input type="text" class="custom-error-input" placeholder="Введите текст ошибки" id="customError">
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
+
+        function formatSum(value) {
+            let digits = value.replace(/\D/g, '');
+
+            if (!digits) return '';
+
+            let formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            return formatted + ' ₽';
+        }
+
+        // элементы
+        const showBtn = document.getElementById('showAddTemplate');
+        const form = document.getElementById('addTemplateForm');
+        const saveBtn = document.getElementById('saveTemplateBtn');
+        const container = document.getElementById('userTemplates');
+
+        // показать/скрыть форму
+        showBtn.onclick = () => {
+            form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+        };
+
+        // localStorage
+        function getUserTemplates() {
+            return JSON.parse(localStorage.getItem('userTemplates') || '[]');
+        }
+
+        function saveUserTemplates(data) {
+            localStorage.setItem('userTemplates', JSON.stringify(data));
+        }
+
+        // создать кнопку (ВАЖНО — полностью как твои otX)
+        function createTemplateButton(tpl, index) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'template-wrapper';
+
+            const btn = document.createElement('button');
+            btn.className = 'templates-item';
+            btn.textContent = tpl.name;
+
+            btn.onclick = () => {
+                document.querySelector('.main-sum').textContent = tpl.sum;
+                document.querySelector('.info-alert-text').textContent = tpl.error;
+            };
+
+            const del = document.createElement('span');
+            del.className = 'template-delete';
+            del.textContent = '✕';
+
+            del.onclick = (e) => {
+                e.stopPropagation();
+
+                const templates = getUserTemplates();
+                templates.splice(index, 1);
+                saveUserTemplates(templates);
+                renderUserTemplates();
+            };
+
+            wrapper.appendChild(btn);
+            wrapper.appendChild(del);
+
+            return wrapper;
+        }
+
+        // рендер
+        function renderUserTemplates() {
+            container.innerHTML = '';
+
+            const templates = getUserTemplates();
+
+            templates.forEach((tpl, index) => {
+                const btn = createTemplateButton(tpl, index);
+                container.appendChild(btn);
+            });
+        }
+
+        // сохранение нового шаблона
+        saveBtn.onclick = () => {
+            const name = document.getElementById('tplName').value.trim();
+            const rawSum = document.getElementById('tplSum').value.trim();
+            const error = document.getElementById('tplError').value.trim();
+
+            if (!name || !rawSum || !error) return;
+
+            const sum = formatSum(rawSum);
+
+            const templates = getUserTemplates();
+            templates.push({ name, sum, error });
+
+            saveUserTemplates(templates);
+
+            document.getElementById('tplName').value = '';
+            document.getElementById('tplSum').value = '';
+            document.getElementById('tplError').value = '';
+
+            form.style.display = 'none';
+
+            renderUserTemplates();
+        };
+
+        // загрузка при старте
+        renderUserTemplates();
+
+        // Чекбокс функционал
+        const checkbox = document.getElementById('customCheckbox');
+        const checkboxContainer = document.querySelector('.checkbox-container');
+        const customInputs = document.getElementById('customInputs');
+        const customSumInput = document.getElementById('customSum');
+        const customErrorInput = document.getElementById('customError');
+
+        checkboxContainer.addEventListener('click', () => {
+            checkbox.classList.toggle('checked');
+            customInputs.classList.toggle('show');
+        });
+
+        // Обработчик для кастомной суммы
+        customSumInput.addEventListener('input', () => {
+            const value = customSumInput.value.trim();
+            if (value) {
+                document.querySelector('.main-sum').textContent = value + (value.includes('₽') ? '' : ' ₽');
+            }
+        });
+
+        // Обработчик для кастомной ошибки
+        customErrorInput.addEventListener('input', () => {
+            const value = customErrorInput.value.trim();
+            if (value) {
+                document.querySelector('.info-alert-text').textContent = value;
+            }
+        });
+
+        // Исправление проблемы с data-and-time-text
+        function updateDateTime() {
+            const currentDate = getCurrentDate();
+            const currentTime = getCurrentTime();
+
+            document.getElementById("date-output").textContent = currentDate;
+            document.getElementById("time-output").textContent = currentTime;
+            document.getElementById("time-output-2").textContent = currentTime;
+
+            // Обновляем data-and-time-text
+            const dateTimeText = document.querySelector('.data-and-time-text');
+            if (dateTimeText) {
+                dateTimeText.innerHTML = `<span id="date-output">${currentDate}</span> <span id="time-output-2">${currentTime}</span>`;
+            }
+        }
 
         const cardFullInput = document.querySelector('.change-numberOfCard');
 
@@ -850,13 +1283,15 @@
         updateDateTime(); // сразу показать при загрузке
 
         // Инпут и текст
+        // Инпут и текст (заменить существующий блок)
         const input = document.querySelector('.change-data-time');
         const text = document.querySelector('.data-and-time-text');
 
         if (input && text) {
             // Начальное значение инпута = актуальная дата + время
-            input.value = `${getCurrentDate()} ${getCurrentTime()}`;
-            text.textContent = input.value;
+            const initialDateTime = `${getCurrentDate()} ${getCurrentTime()}`;
+            input.value = initialDateTime;
+            text.innerHTML = `<span id="date-output">${getCurrentDate()}</span> <span id="time-output-2">${getCurrentTime()}</span>`;
 
             // При вводе меняем текст и отключаем автообновление
             input.addEventListener('input', () => {
