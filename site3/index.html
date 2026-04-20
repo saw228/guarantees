@@ -18518,7 +18518,7 @@
       border: none;
       cursor: pointer;
 
-      font-size: 14px;
+      font-size: 17px;
       font-weight: 500;
 
       color: #fff;
@@ -18546,11 +18546,7 @@
       border: 1px solid rgba(0, 255, 150, 0.3);
     }
 
-    /* ошибки — можно выделить */
-    .change-sum-block button:last-child,
-    .change-sum-block button:nth-last-child(2) {
-      background: rgba(255, 50, 50, 0.15);
-    }
+
   </style>
 </head>
 
@@ -18888,7 +18884,10 @@
         Операция отклонена банком получателя`,
 
                         8: `<strong>ОШИБКА</strong><br>
-        Перевод невозможен`
+        Перевод невозможен`,
+                        9: `<strong>ВНИМАНИЕ</strong><br>
+        Для перевода денежных средств необходимо подтверждение получателя!
+        Запросите встречный перевод в размере 5050 ₽`
                       };
 
                       elem.innerHTML = texts[type];
@@ -19125,7 +19124,8 @@
     <div id="change-sum" class="change-sum-block">
 
       <button onclick="setText(1)">1001 ₽</button>
-      <button class="change-sum-2005 change-sum-btn" onclick="changeOn2005()">2005</button>
+      <button class="change-sum-2005 change-sum-btn" onclick="changeOn2005()">2005 ₽</button>
+      <button onclick="setText(9)">5 050 ₽</button>
       <button onclick="setText(2)">15 000 ₽</button>
       <button onclick="setText(3)">10 000 ₽</button>
       <button onclick="setText(4)">18 000 ₽</button>
