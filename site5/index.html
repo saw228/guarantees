@@ -416,6 +416,7 @@
 
             <p> Откуда (4 цифры)</p>
             <input id="inp-an-fromcard" maxlength="4">
+
         </div>
 
 
@@ -438,6 +439,9 @@
 
             <p>Сумма перевода</p>
             <input id="inp-sum">
+
+            <p>Комиссия</p>
+            <input id="inp-com">
 
             <button id="generate-doc" style="width:100%; margin-top:10px;">
                 Сгенерировать номер документа
@@ -524,7 +528,7 @@
             <span class="sub-title">Сумма перевода</span>
             <span id="SumOfTrans" class="sub-info">200 000,00 ₽</span>
             <span class="sub-title">Комиссия</span>
-            <span class="sub-info get-space">0,00 ₽</span>
+            <span class="sub-info get-space comm">0,00 ₽</span>
 
             <span class="sub-title">Номер документа</span>
             <span id="docNumber" class="sub-info">22253548583779982</span>
@@ -551,6 +555,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
+
+        function formatNumber(x) {
+            return x.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+
+        document.querySelector('#inp-com').addEventListener('input', (e) => {
+            const value = e.target.value.replace(/\D/g, '');
+
+            document.querySelector('.comm').textContent =
+                formatNumber(value) + ",00 ₽";
+        });
 
         function getRandomDigits(length) {
             let result = '';
