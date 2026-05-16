@@ -475,17 +475,17 @@
             <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
             <span class="AnSub-title">Сколько</span>
-            <span id="anSum" class="AnSub-info">300 000 Р</span>
+            <span id="anSum" class="AnSub-info">300 000 ₽</span>
 
             <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
             <span class="AnSub-title">Комиссия</span>
-            <span id="anCom" class="AnSub-info">3 000 Р</span>
+            <span id="anCom" class="AnSub-info">3 000 ₽</span>
 
             <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
             <span class="AnSub-title">Списано</span>
-            <span id="AnSum" class="AnSub-info">303 000 Р</span>
+            <span id="AnSum" class="AnSub-info">303 000 ₽</span>
 
             <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
@@ -682,7 +682,7 @@
 
             const total = sum + com;
 
-            anElements.total.textContent = numberWithSpaces(total.toString()) + " Р";
+            anElements.total.textContent = numberWithSpaces(total.toString()) + " ₽";
         }
 
         const sberPanel = document.querySelectorAll(".editor-panel")[1];
@@ -744,13 +744,13 @@
 
         anInputs.sum.addEventListener("input", e => {
             let val = e.target.value.replace(/\D/g, '');
-            anElements.sum.textContent = numberWithSpaces(val) + " Р";
+            anElements.sum.textContent = numberWithSpaces(val) + " ₽";
             updateAnotherTotal();
         });
 
         anInputs.com.addEventListener("input", e => {
             let val = e.target.value.replace(/\D/g, '');
-            anElements.com.textContent = numberWithSpaces(val) + " Р";
+            anElements.com.textContent = numberWithSpaces(val) + " ₽";
             updateAnotherTotal();
         });
 
