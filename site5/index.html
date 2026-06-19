@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <title>Phon</title>
 
     <style>
@@ -29,7 +27,7 @@
             align-items: center;
             flex-direction: column;
             gap: 20px;
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: "Roboto", sans-serif;
         }
 
         .phone-wrapper {
@@ -51,7 +49,7 @@
 
         .another-bank-screen {
             width: 588px;
-            height: 1515px;
+            height: 1280px;
             background: white;
             transform: scale(0.5);
             transform-origin: top left;
@@ -274,7 +272,7 @@
 
         .AnBottom {
             width: 400px;
-            margin: 30px auto;
+            margin: 60px auto;
         }
 
         .switch-container {
@@ -384,11 +382,6 @@
             border-color: #111;
             background: #f7f7f7;
         }
-
-        #suip {
-            display: block;
-            width: 100px;
-        }
     </style>
 
 </head>
@@ -424,16 +417,6 @@
             <p> Откуда (4 цифры)</p>
             <input id="inp-an-fromcard" maxlength="4">
 
-            <p>Банк получателя</p>
-            <input id="inp-bank">
-
-            <button type="button" onclick="generatePastNumber()">Генерировать СУИП</button>
-
-            <div style="display:flex; gap:10px;">
-                <button id="copy-btn">Скопировать</button>
-                <button id="pdf-btn">Скачать PDF</button>
-            </div>
-
         </div>
 
 
@@ -460,8 +443,6 @@
             <p>Комиссия</p>
             <input id="inp-com">
 
-
-
             <button id="generate-doc" style="width:100%; margin-top:10px;">
                 Сгенерировать номер документа
             </button>
@@ -486,53 +467,37 @@
             <span id="anHisCard" class="AnSub-info">** 6787</span>
 
             <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                - - - - - - - - - - - - -</div>
-
-            <span class="AnSub-title">В банк</span>
-            <span id="inBank" class="AnSub-info">Сбербанк</span>
-
-            <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                - - - - - - - - - - - - -</div>
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
 
             <span class="AnSub-title">Страна</span>
             <span class="AnSub-info">Россия</span>
 
             <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                - - - - - - - - - - - - -</div>
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
             <span class="AnSub-title">Сколько</span>
             <span id="anSum" class="AnSub-info">300 000 ₽</span>
 
             <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                - - - - - - - - - - - - -</div>
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
             <span class="AnSub-title">Комиссия</span>
             <span id="anCom" class="AnSub-info">3 000 ₽</span>
 
             <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                - - - - - - - - - - - - -</div>
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
             <span class="AnSub-title">Списано</span>
             <span id="AnSum" class="AnSub-info">303 000 ₽</span>
 
             <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                - - - - - - - - - - - - -</div>
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
 
             <span class="AnSub-title">От кого</span>
             <span id="anFromName" class="AnSub-info">Мария Александровна Б.</span>
 
             <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                - - - - - - - - - - - - -</div>
+                - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
 
             <span class="AnSub-title">Откуда</span>
             <span id="anFromCard" class="AnSub-info">** 6787</span>
-
-            <div class="AnDivider">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                - - - - - - - - - - - - -</div>
-
-            <span class="AnSub-title">СУИП</span>
-            <span id="suip" class="AnSub-info">5346478447548349594</span>
-
-
-
-
 
             <img class="AnBottom" src="./source/under.png" alt="">
 
@@ -581,49 +546,15 @@
         </div>
     </div>
 
-
+    <div style="display:flex; gap:10px;">
+        <button id="copy-btn">Скопировать</button>
+        <button id="pdf-btn">Скачать PDF</button>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
-
-        function generatePastNumber() {
-            const raw = document.getElementById('inp-an-time').value.trim().toLowerCase();
-            if (!raw) return; // если инпут пустой — выходим
-
-            const months = {
-                'января': '01', 'февраля': '02', 'марта': '03', 'апреля': '04',
-                'мая': '05', 'июня': '06', 'июля': '07', 'августа': '08',
-                'сентября': '09', 'октября': '10', 'ноября': '11', 'декабря': '12'
-            };
-
-            const parts = raw.split(/\s+/);
-            const day = String(parseInt(parts[0], 10)).padStart(2, '0');
-            const month = months[parts[1]] || '01';
-            const year = parts[2];
-            const datePart = `${year}${month}${day}`;
-
-            const hex = '0123456789abcdef';
-            let rest = '';
-            for (let i = 0; i < 28; i++) {
-                rest += hex[Math.floor(Math.random() * 16)];
-            }
-
-            const full = datePart + rest;
-            const head = full.slice(0, -3);   // всё кроме последних 3 символов
-            const tail = full.slice(-3);      // последние 3 символа
-
-            document.getElementById('suip').innerHTML = head + '<br>' + tail;
-        }
-
-        window.addEventListener('DOMContentLoaded', function () {
-            generatePastNumber();
-        });
-
-        document.getElementById('inp-bank').addEventListener('input', function () {
-            document.getElementById('inBank').textContent = this.value;
-        });
 
         function formatNumber(x) {
             return x.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -942,7 +873,7 @@
 
             const canvas = await html2canvas(screen, {
                 width: 588,
-                height: 1515,
+                height: 1280,
                 scale: 1,
                 backgroundColor: "#ffffff"
             });
@@ -987,7 +918,7 @@
 
             const canvas = await html2canvas(screen, {
                 width: 588,
-                height: 1515,
+                height: 1280,
                 scale: 1,
                 backgroundColor: "#ffffff"
             });
