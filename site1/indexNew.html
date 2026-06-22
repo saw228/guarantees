@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+
+
+    body {
+      background: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .phone-container {
+      width: 375px;
+      height: 812px;
+      position: relative;
+
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7), inset 0 0 0 1px #333;
+    }
+
+    /* ═══ ЭКРАН НЕУСПЕХА ═══ */
+    .screen-fail {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #f6f1f6;
+    }
+
+    .fail-top-title {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 56px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .fail-circle {
+      position: absolute;
+      left: 50%;
+      top: 27%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 120px;
+    }
+
+    .fail-icon-wrap {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #e05040;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 30px 12px rgba(220, 70, 50, 0.5);
+    }
+
+    .fail-amount {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 37%;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .fail-sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fffcff;
+      border-radius: 18px 18px 0 0;
+      padding: 12px 16px 36px;
+      top: 55%;
+    }
+
+    .fail-sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: #ccc;
+      border-radius: 2px;
+      margin: 0 auto 14px;
+    }
+
+    .fail-sheet-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 4px;
+      line-height: 1.4;
+      height: 41px;
+    }
+
+    .fail-sheet-sub {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.5;
+      margin-bottom: 16px;
+      height: 40px;
+    }
+
+    .fail-sheet-section {
+      font-size: 16px;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 20px;
+      margin-top: 30px;
+    }
+
+    .fail-sheet-row {
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+    }
+
+    .fail-sheet-row-label {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 2px;
+    }
+
+    .fail-sheet-row-val {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 2px;
+      margin-top: 5px;
+    }
+
+    .fail-sheet-btn {
+      width: 100%;
+      background: #21a038;
+      border-radius: 16px;
+      padding: 17px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      color: #fff;
+      margin-top: 30px;
+      cursor: pointer;
+    }
+
+    .fail-sheet-divider {
+      background-color: #f6f1f6;
+      width: 375px;
+      height: 8px;
+      position: absolute;
+      bottom: 240px;
+      left: 0;
+    }
+
+
+
+    #batteryContainer {
+      display: flex;
+      align-items: center;
+      margin-right: 5px;
+      margin-bottom: 1px;
+      margin-top: 3px;
+    }
+
+    .battery-detailed {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+    }
+
+    .battery-body-2 {
+      position: relative;
+      width: 24px;
+      height: 13px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #818181;
+    }
+
+    .battery-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 87%;
+      transition: width 0.3s;
+      z-index: 1;
+    }
+
+    .battery-text {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -45%);
+      font-size: 11.5px;
+      font-weight: 500;
+      z-index: 2;
+      pointer-events: none;
+      padding-top: 1px;
+    }
+
+    .settings-panel {
+      width: 320px;
+      padding: 18px;
+      border-radius: 20px;
+      background: #111318;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      font-family: Inter, Arial, sans-serif;
+      color: #fff;
+      margin-right: 50px;
+    }
+
+    .section-lbl {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+      opacity: 0.9;
+    }
+
+    .battery-title {
+      margin-top: 18px;
+    }
+
+    .inp-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 13px;
+    }
+
+    .inp-group label {
+      font-size: 12px;
+      color: #8f96a3;
+      font-weight: 500;
+    }
+
+    .inp-group input[type="text"],
+    .inp-group input[type="time"] {
+      height: 42px;
+      border: none;
+      outline: none;
+      border-radius: 12px;
+      background: #1a1d24;
+      color: #fff;
+      padding: 0 13px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .inp-group input::placeholder {
+      color: #565d6b;
+    }
+
+    .inp-group input:focus {
+      border-color: #4f8cff;
+      background: #1d212a;
+    }
+
+    .bmode-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      background: #1a1d24;
+      padding: 5px;
+      border-radius: 14px;
+    }
+
+    .bmode-btn {
+      flex: 1;
+      height: 36px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: #8f96a3;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .bmode-btn.active {
+      background: #ffffff;
+      color: #111318;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #4f8cff;
+      cursor: pointer;
+    }
+
+    #copy-btn {
+      width: 100%;
+      height: 44px;
+      border: none;
+      border-radius: 14px;
+      background: #ffffff;
+      color: #111318;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: Inter, Arial, sans-serif;
+      cursor: pointer;
+      margin-top: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      transition: 0.2s ease;
+    }
+
+    #copy-btn:hover {
+      background: #e9ecf1;
+      transform: translateY(-1px);
+    }
+
+    #copy-btn:active {
+      transform: scale(0.98);
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.25);
+    }
+
+    .template-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .template-btn {
+      height: 38px;
+      border: none;
+      border-radius: 11px;
+      background: #1a1d24;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: 0.2s ease;
+    }
+
+    .template-btn:hover {
+      background: #242936;
+    }
+
+    .template-btn:active {
+      transform: scale(0.96);
+    }
+  </style>
+</head>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+
+
+<div id="export-screen" style="
+    position: fixed;
+    left: -9999px;
+    top: 0;
+    width: 375px;
+    height: 812px;
+"></div>
+
+<body>
+
+  <div class="settings-panel">
+
+    <div class="section-lbl">Данные</div>
+
+    <div class="inp-group">
+      <label>Сумма</label>
+      <input type="text" id="inputA" placeholder="200 000">
+    </div>
+
+    <div class="inp-group">
+      <label>Ошибка</label>
+      <input type="text" id="inputB" placeholder="Перевод не будет зачислен, так как не пройден " Антифрод"">
+    </div>
+
+    <div class="inp-group">
+      <label>Действие</label>
+      <input type="text" id="inputC"
+        placeholder="Необходимо совершить встречный перевод, размером 1001 российский рубль">
+    </div>
+
+    <div class="inp-group">
+      <label>Последние 4 цифры карты</label>
+      <input type="text" id="inputD" maxlength="4" placeholder="0000">
+    </div>
+
+    <div class="inp-group">
+      <label>Время</label>
+      <input type="time" id="inputE" value="12:00">
+    </div>
+
+    <div class="inp-group">
+      <label>Банк</label>
+      <input type="text" id="failSheetInput" placeholder="Сбербанк">
+    </div>
+
+    <div class="section-lbl battery-title">Батарея</div>
+
+    <div class="bmode-row">
+      <button class="bmode-btn active" id="bmodeSimple" onclick="setBatteryMode('simple')">Без %</button>
+      <button class="bmode-btn" id="bmodeDetailed" onclick="setBatteryMode('detailed')">С %</button>
+    </div>
+
+    <div class="inp-group">
+      <label>Заряд</label>
+      <input type="range" min="1" max="100" value="80" id="batterySlider">
+    </div>
+
+    <div class="section-lbl">Шаблоны</div>
+
+    <div class="template-row">
+      <button class="template-btn" onclick="applyTemplate(2005)">2005</button>
+      <button class="template-btn" onclick="applyTemplate(5050)">5050</button>
+      <button class="template-btn" onclick="applyTemplate(15000)">15000</button>
+    </div>
+
+    <button id="copy-btn">Скопировать</button>
+
+  </div>
+
+  <div class="phone-container">
+
+    <div
+      style=" padding: 5px 20px; align-items: center; width: 100%; display: flex; justify-content: space-between; z-index: 99999999999999999999;  position: absolute; top: 0; left: 0;"
+      class="phone-header">
+      <span style="color: black; font-size: 18px; font-weight: 500;" id="time-output"
+        class="phone-header-time">12:00</span>
+      <div style="display: flex; gap: 2px;"><img style="width: 60px;" src="./source/blackwifis-removebg-preview.png"
+          alt="">
+        <div id="batteryContainer"></div>
+      </div>
+
+    </div>
+    <div class="screen-fail">
+      <div class="fail-top-title">Перевод не выполнен</div>
+
+      <div class="fail-circle">
+        <img style="width: 130px;" src="./source/otmena.png" alt="">
+      </div>
+
+      <div class="fail-amount">200 000 ₽</div>
+
+      <div class="fail-sheet">
+        <div class="fail-sheet-handle"></div>
+        <div class="fail-sheet-title">Перевод не будет зачислен, так как не пройден "Антифрод"</div>
+        <div class="fail-sheet-sub">Необходимо совершить встречный перевод, размером 1001 российский рубль</div>
+        <div class="fail-sheet-section">Подробности</div>
+        <div class="fail-sheet-row">
+          <div class="fail-sheet-row-label">Куда</div>
+          <div style="color:black;font-weight:600;" class="fail-sheet-row-val">•• 3838</div>
+          <div id="bank" class="fail-sheet-row-val">Сбербанк</div>
+        </div>
+        <div class="fail-sheet-btn">Вернуться на главный</div>
+        <div class="fail-sheet-divider"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+
+    const failSheetInput = document.getElementById('failSheetInput');
+    const failSheetValue = document.querySelector('#bank');
+
+    failSheetInput.addEventListener('input', () => {
+      failSheetValue.textContent = failSheetInput.value;
+    });
+
+    const templates = {
+      2005: { inputA: '1 001 ₽', inputB: 'Перевод не будет зачислен, так как не пройден "Антифрод"', inputC: 'Необходимо совершить встречный перевод, размером 2005 российский рубль' },
+      5050: { inputA: '3 006 ₽', inputB: 'Перевод не будет зачислен, так как не пройден "Антифрод"', inputC: 'Необходимо совершить встречный перевод, размером 5050 российский рубль' },
+      15000: { inputA: '8 056 ₽', inputB: 'Перевод не будет зачислен, так как налог не уплачен', inputC: 'Для завершения процедуры необходимо оплатить налог в размере 15 000 рублей.' }
+    };
+
+    function applyTemplate(num) {
+      const tpl = templates[num];
+
+      inputA.value = tpl.inputA;
+      inputB.value = tpl.inputB;
+      inputC.value = tpl.inputC;
+
+      document.querySelector('.fail-amount').textContent = tpl.inputA;
+      document.querySelector('.fail-sheet-title').textContent = tpl.inputB;
+      document.querySelector('.fail-sheet-sub').textContent = tpl.inputC;
+    }
+
+    /* ═══ ВРЕМЯ МСК (time-output) ═══ */
+
+
+    const elA = document.querySelector('.fail-amount');
+    const elB = document.querySelector('.fail-sheet-title');
+    const elC = document.querySelector('.fail-sheet-sub');
+    const elD = document.querySelector('.fail-sheet-row-val');
+    const elE = document.querySelector('.phone-header-time');
+
+    const inputA = document.getElementById('inputA');
+    const inputB = document.getElementById('inputB');
+    const inputC = document.getElementById('inputC');
+    const inputD = document.getElementById('inputD');
+    const inputE = document.getElementById('inputE');
+
+    function formatNumber(value) {
+      const onlyNums = value.replace(/\D/g, '');
+      return onlyNums.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    let manualTimeEnabled = false;
+
+    /* ═══ ВРЕМЯ МСК (time-output) ═══ */
+    function getMoscowTime() {
+      return new Intl.DateTimeFormat('ru-RU', {
+        timeZone: 'Europe/Moscow',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).format(new Date());
+    }
+
+    function updateMoscowTime() {
+      if (manualTimeEnabled) return;
+
+      document.getElementById('time-output').textContent = getMoscowTime();
+    }
+
+    updateMoscowTime();
+    setInterval(updateMoscowTime, 1000);
+
+    /* ═══ РУЧНОЙ ВВОД ВРЕМЕНИ ═══ */
+
+    inputE.addEventListener('input', () => {
+      manualTimeEnabled = true;
+      timeOutput.textContent = inputE.value;
+    });
+
+    inputA.addEventListener('input', () => {
+      inputA.value = formatNumber(inputA.value);
+      elA.textContent = inputA.value;
+    });
+
+    inputB.addEventListener('input', () => {
+      elB.textContent = inputB.value;
+    });
+
+    inputC.addEventListener('input', () => {
+      elC.textContent = inputC.value;
+    });
+
+    inputD.addEventListener('input', () => {
+      inputD.value = inputD.value.replace(/\D/g, '').slice(0, 4);
+      elD.textContent = inputD.value.length ? `•• ${inputD.value}` : '';
+    });
+
+    inputE.addEventListener('input', () => {
+      elE.textContent = inputE.value;
+    });
+
+    /* ═══ БАТАРЕЯ ═══ */
+    let batteryMode = 'simple';
+    function setBatteryMode(m) {
+      batteryMode = m;
+      document.getElementById('bmodeSimple').classList.toggle('active', m === 'simple');
+      document.getElementById('bmodeDetailed').classList.toggle('active', m === 'detailed');
+      renderBattery();
+    }
+    function renderBattery() {
+      const container = document.getElementById('batteryContainer');
+      const level = parseInt(document.getElementById('batterySlider').value);
+      const color = level < 20 ? '#ff3b30' : '#000';
+      if (batteryMode === 'simple') {
+        container.innerHTML = `<svg style="width:28px;" viewBox="0 0 100 50">
+      <rect x="1" y="1" width="90" height="48" rx="12" fill="none" stroke="#8e8e93" stroke-width="2"/>
+      <rect x="92" y="15" width="6" height="20" rx="3" fill="#8e8e93"/>
+      <clipPath id="bclip"><rect x="4" y="4" width="84" height="42" rx="10"/></clipPath>
+      <rect x="4" y="4" width="${(level / 100) * 84}" height="42" rx="10" fill="${color}" clip-path="url(#bclip)"/>
+    </svg>`;
+      } else {
+        const fillColor = level < 20 ? '#ff3b30' : '#000';
+        container.innerHTML = `<div class="battery-detailed">
+      <div class="battery-body-2">
+        <div class="battery-fill" style="width:${level}%;background:${fillColor};"></div>
+        <span class="battery-text" style="color:#fff;">${level}</span>
+      </div>
+      <div class="battery-cap"></div>
+    </div>`;
+      }
+    }
+    document.getElementById('batterySlider').addEventListener('input', renderBattery);
+    renderBattery();
+
+    document.getElementById("copy-btn").addEventListener("click", async () => {
+      const screen = document.querySelector(".phone-container");
+      const exportScreen = document.getElementById("export-screen");
+      const button = document.getElementById("copy-btn");
+
+      exportScreen.innerHTML = "";
+      exportScreen.appendChild(screen.cloneNode(true));
+
+      const canvas = await html2canvas(exportScreen.firstElementChild, {
+        width: 375,
+        height: 812,
+        scale: window.devicePixelRatio * 2,
+        useCORS: true,
+        backgroundColor: "#f6f1f6"
+      });
+
+      canvas.toBlob(async (blob) => {
+        try {
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              "image/png": blob
+            })
+          ]);
+
+          button.textContent = "Скопировано";
+          button.classList.add("copied");
+
+          setTimeout(() => {
+            button.textContent = "Скопировать";
+            button.classList.remove("copied");
+          }, 2000);
+
+        } catch {
+          const link = document.createElement("a");
+          link.download = "screen.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>
