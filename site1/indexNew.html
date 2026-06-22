@@ -372,14 +372,6 @@
 
 
 
-<div id="export-screen" style="
-    position: fixed;
-    left: -9999px;
-    top: 0;
-    width: 375px;
-    height: 812px;
-"></div>
-
 <body>
 
   <div class="settings-panel">
@@ -552,7 +544,7 @@
 
     inputE.addEventListener('input', () => {
       manualTimeEnabled = true;
-      timeOutput.textContent = inputE.value;
+      document.getElementById('time-output').textContent = inputE.value; // ← было timeOutput
     });
 
     inputA.addEventListener('input', () => {
@@ -612,36 +604,34 @@
 
     document.getElementById("copy-btn").addEventListener("click", async () => {
       const screen = document.querySelector(".phone-container");
-      const exportScreen = document.getElementById("export-screen");
       const button = document.getElementById("copy-btn");
 
-      exportScreen.innerHTML = "";
-      exportScreen.appendChild(screen.cloneNode(true));
+      const originalShadow = screen.style.boxShadow;
+      screen.style.boxShadow = "none";
 
-      const canvas = await html2canvas(exportScreen.firstElementChild, {
+      await new Promise(resolve => setTimeout(resolve, 30));
+
+      const canvas = await html2canvas(screen, {
         width: 375,
         height: 812,
-        scale: window.devicePixelRatio * 2,
+        scale: 2,
         useCORS: true,
         backgroundColor: "#f6f1f6"
       });
 
+      screen.style.boxShadow = originalShadow;
+
       canvas.toBlob(async (blob) => {
         try {
           await navigator.clipboard.write([
-            new ClipboardItem({
-              "image/png": blob
-            })
+            new ClipboardItem({ "image/png": blob })
           ]);
-
           button.textContent = "Скопировано";
           button.classList.add("copied");
-
           setTimeout(() => {
             button.textContent = "Скопировать";
             button.classList.remove("copied");
           }, 2000);
-
         } catch {
           const link = document.createElement("a");
           link.download = "screen.png";
