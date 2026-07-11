@@ -604,6 +604,12 @@
 
   <div class="settings-panel">
 
+    <div class="section-lbl">Версия</div>
+
+    <div class="project-switch">
+      <button type="button" id="projectOldBtn" class="active">Old</button>
+      <button type="button" id="projectNewBtn">New</button>
+    </div>
 
     <div class="section-lbl">Данные</div>
 
@@ -628,6 +634,7 @@
       <div class="destination-type-row">
         <button type="button" class="active" data-destination="card">Номер карты</button>
         <button type="button" data-destination="phone">Номер телефона</button>
+        <button type="button" data-destination="account">Платежный счет</button>
       </div>
     </div>
 
@@ -829,6 +836,26 @@
     const inputE = document.getElementById('inputE');
 
 
+    const projectOldBtn = document.getElementById('projectOldBtn');
+    const projectNewBtn = document.getElementById('projectNewBtn');
+    const currentFile = location.pathname.split('/').pop().toLowerCase();
+    const currentProject = currentFile.includes('new') ? 'new' : 'old';
+
+    function setProjectButtons(type) {
+      projectOldBtn.classList.toggle('active', type === 'old');
+      projectNewBtn.classList.toggle('active', type === 'new');
+    }
+
+    function switchProject(type) {
+      setProjectButtons(type);
+      localStorage.setItem('selectedProjectVersion', type);
+      const target = type === 'old' ? 'indexOld.html' : 'indexNew.html';
+      if (currentFile !== target.toLowerCase()) location.href = target;
+    }
+
+    setProjectButtons(currentProject);
+    projectOldBtn.addEventListener('click', () => switchProject('old'));
+    projectNewBtn.addEventListener('click', () => switchProject('new'));
 
     let destinationType = 'card';
     const destinationButtons = document.querySelectorAll('[data-destination]');
@@ -845,29 +872,16 @@
       phone: {
         inputLabel: 'Номер телефона',
         outputLabel: 'Номер телефона',
-        placeholder: '+7 (332) 432-43-23',
-        maxLength: 18
+        placeholder: '+7 999 123-45-67',
+        maxLength: 20
+      },
+      account: {
+        inputLabel: 'Платежный счет',
+        outputLabel: 'Платежный счет',
+        placeholder: 'Введите номер счета',
+        maxLength: 34
       }
     };
-
-    function formatPhoneNumber(value) {
-      let digits = value.replace(/\D/g, '');
-
-      if (digits.startsWith('8') || digits.startsWith('7')) {
-        digits = digits.slice(1);
-      }
-
-      digits = digits.slice(0, 10);
-      let formatted = '+7';
-
-      if (digits.length > 0) formatted += ' (' + digits.slice(0, 3);
-      if (digits.length >= 3) formatted += ')';
-      if (digits.length > 3) formatted += ' ' + digits.slice(3, 6);
-      if (digits.length > 6) formatted += '-' + digits.slice(6, 8);
-      if (digits.length > 8) formatted += '-' + digits.slice(8, 10);
-
-      return formatted;
-    }
 
     function formatDestinationValue(value) {
       if (destinationType === 'card') {
@@ -875,13 +889,6 @@
         inputD.value = digits;
         return digits ? `•• ${digits}` : '';
       }
-
-      if (destinationType === 'phone') {
-        const formatted = formatPhoneNumber(value);
-        inputD.value = formatted;
-        return formatted === '+7' ? '' : formatted;
-      }
-
       return value.trim();
     }
 
@@ -893,7 +900,6 @@
       destinationOutputLabel.textContent = config.outputLabel;
       inputD.placeholder = config.placeholder;
       inputD.maxLength = config.maxLength;
-      inputD.inputMode = 'numeric';
       inputD.value = '';
       elD.textContent = '';
     }
