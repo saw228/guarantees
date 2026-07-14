@@ -577,8 +577,6 @@
       bottom: 0;
       height: 74px;
       background: rgba(10, 10, 10, 0.48);
-      -webkit-backdrop-filter: blur(8px);
-      backdrop-filter: blur(8px);
       z-index: 30;
       pointer-events: none;
     }
@@ -1063,11 +1061,6 @@
           <div class="transactions" id="transactionsOutput"></div>
 
           
-
-          <div class="demo-watermark" aria-hidden="true">
-            <div class="demo-watermark-main">ДЕМО</div>
-            <div class="demo-watermark-sub">НЕ ЯВЛЯЕТСЯ БАНКОВСКИМ ДОКУМЕНТОМ</div>
-          </div>
 
           <nav class="android-nav" aria-label="Системная навигация Android">
             <div class="android-nav-button android-recents" aria-hidden="true">
@@ -1713,9 +1706,10 @@
               <div class="field">
                 <label>Аватар</label>
                 <select class="select avatar">
-                  <option value="a" ${item.avatar === 'a' ? 'selected' : ''}>Альфа</option>
-                  <option value="check" ${item.avatar === 'check' ? 'selected' : ''}>Сбер</option>
-                  <option value="yellow" ${item.avatar === 'yellow' ? 'selected' : ''}>Тбанк</option>
+                  <option value="a" ${item.avatar === 'a' ? 'selected' : ''}>Красный A</option>
+                  <option value="check" ${item.avatar === 'check' ? 'selected' : ''}>Зелёная галочка</option>
+                  <option value="home" ${item.avatar === 'home' ? 'selected' : ''}>Красный дом</option>
+                  <option value="yellow" ${item.avatar === 'yellow' ? 'selected' : ''}>Жёлтый</option>
                 </select>
               </div>
             </div>
