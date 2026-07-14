@@ -89,6 +89,7 @@
     <button data-target="site6">ПЕРЕВОД 200К</button>
     <button data-target="site7">ДЕКЛАРАЦИЯ</button>
     <button data-target="site8">СКРИНЫ БАЛАНСА</button>
+    <button data-target="site9">ИСТОРИЯ ПЕЕРВОДОВ</button>
 
   </div>
 
@@ -101,6 +102,7 @@
     <iframe id="site6" src="site6/index.html"></iframe>
     <iframe id="site7" src="site7/index.html"></iframe>
     <iframe id="site8" src="site8/index.html"></iframe>
+    <iframe id="site9" src="site9/index.html"></iframe>
   </div>
 
   <script>
@@ -113,7 +115,8 @@
       site5: document.getElementById('site5'),
       site6: document.getElementById('site6'),
       site7: document.getElementById('site7'),
-      site8: document.getElementById('site8')
+      site8: document.getElementById('site8'),
+      site9: document.getElementById('site9')
     };
 
     let savedSite = localStorage.getItem('activeSite') || 'site1';
