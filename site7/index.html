@@ -886,6 +886,9 @@
         <label>Сумма оплаты</label>
         <input type="text" id="plata">
 
+        <label>Ставка налога, %</label>
+        <input type="text" id="taxRate" value="7,5" inputmode="decimal">
+
         <label>Пол</label>
         <div>
             <label><input type="checkbox" id="male"> Муж</label>
@@ -1347,7 +1350,7 @@
                 <!-- Section Title -->
                 <div class="section-title">
                     Раздел 1. Расчет налоговой базы и суммы налога по доходам, в частности выигрышам, облагаемым по<br>
-                    ставке <span class="rate-large">7,5 %</span>
+                    ставке <span class="rate-large tax-rate-percent">7,5 %</span>
                 </div>
 
                 <!-- Main Table -->
@@ -1370,7 +1373,7 @@
                         <!-- Section I -->
                         <tr>
                             <td colspan="4" class="section-sub">I Расчет общей суммы дохода, подлежащего налогообложению
-                                по ставке 7,5%
+                                по ставке <span class="tax-rate-percent-compact">7,5%</span>
                             </td>
                         </tr>
 
@@ -1458,7 +1461,7 @@
                             <td>
                                 <span style="font-weight: bold;" class="desc-main">Сумма налога, исчисленного к
                                     уплате</span>
-                                <span class="desc-sub">(Умножьте значение строки 050 на 0,075)</span>
+                                <span class="desc-sub">(Умножьте значение строки 050 на <span class="tax-rate-decimal">0,075</span>)</span>
                             </td>
                             <td class="col-code">060</td>
                             <td class="val-cell changePlata">15 000 рублей 0 копеек</td>
@@ -1572,6 +1575,51 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
+
+        const taxRateInput = document.getElementById('taxRate');
+
+        function updateTaxRate(value) {
+            const normalized = value
+                .replace(',', '.')
+                .replace(/[^\d.]/g, '')
+                .replace(/(\..*)\./g, '$1');
+
+            if (!normalized || normalized === '.') return;
+
+            const rate = Number(normalized);
+            if (!Number.isFinite(rate)) return;
+
+            const percentText = normalized.replace('.', ',');
+            const decimalText = (rate / 100)
+                .toFixed(6)
+                .replace(/0+$/, '')
+                .replace(/\.$/, '')
+                .replace('.', ',');
+
+            document.querySelectorAll('.tax-rate-percent').forEach(el => {
+                el.textContent = `${percentText} %`;
+            });
+
+            document.querySelectorAll('.tax-rate-percent-compact').forEach(el => {
+                el.textContent = `${percentText}%`;
+            });
+
+            document.querySelectorAll('.tax-rate-decimal').forEach(el => {
+                el.textContent = decimalText;
+            });
+        }
+
+        taxRateInput.addEventListener('input', () => {
+            let value = taxRateInput.value
+                .replace('.', ',')
+                .replace(/[^\d,]/g, '')
+                .replace(/(,.*),/g, '$1');
+
+            taxRateInput.value = value;
+            updateTaxRate(value);
+        });
+
+        updateTaxRate(taxRateInput.value);
 
         const input = document.getElementById('plata');
 
