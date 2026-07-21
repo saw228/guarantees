@@ -451,7 +451,7 @@
     .template-create-form {
       display: none;
       background: #15181f;
-      border: 1px solid rgba(255,255,255,.06);
+      border: 1px solid rgba(255, 255, 255, .06);
       border-radius: 14px;
       padding: 12px;
       margin-bottom: 10px;
@@ -465,7 +465,7 @@
       width: 100%;
       height: 39px;
       border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.06);
+      border: 1px solid rgba(255, 255, 255, .06);
       background: #1a1d24;
       color: #fff;
       outline: none;
@@ -514,7 +514,7 @@
     .template-apply-btn {
       flex: 1;
       min-height: 39px;
-      border: 1px solid rgba(255,255,255,.06);
+      border: 1px solid rgba(255, 255, 255, .06);
       border-radius: 11px;
       background: #1a1d24;
       color: #fff;
@@ -592,7 +592,6 @@
         flex-shrink: 0;
       }
     }
-
   </style>
 </head>
 
@@ -938,7 +937,8 @@
 
     function formatNumber(value) {
       const onlyNums = value.replace(/\D/g, '');
-      return onlyNums.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      const formatted = onlyNums.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      return formatted ? formatted + ' ₽' : '';
     }
 
     let manualTimeEnabled = false;
