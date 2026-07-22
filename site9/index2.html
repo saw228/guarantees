@@ -860,55 +860,6 @@
       line-height: 1.35;
     }
 
-
-    /* Перетаскивание переводов мышкой */
-    .transaction-editor[draggable="true"] .transaction-editor-head {
-      cursor: grab;
-      user-select: none;
-    }
-
-    .transaction-editor[draggable="true"] .transaction-editor-head:active {
-      cursor: grabbing;
-    }
-
-    .transaction-editor.dragging {
-      opacity: .42;
-      transform: scale(.985);
-    }
-
-    .transaction-editor.drag-over-before {
-      box-shadow: 0 -3px 0 #579df5, 0 0 18px rgba(87,157,245,.22);
-    }
-
-    .transaction-editor.drag-over-after {
-      box-shadow: 0 3px 0 #579df5, 0 0 18px rgba(87,157,245,.22);
-    }
-
-    .transactions .transaction[draggable="true"],
-    .transactions .date-separator[draggable="true"] {
-      cursor: grab;
-    }
-
-    .transactions .transaction[draggable="true"]:active,
-    .transactions .date-separator[draggable="true"]:active {
-      cursor: grabbing;
-    }
-
-    .transactions .transaction.preview-dragging,
-    .transactions .date-separator.preview-dragging {
-      opacity: .45 !important;
-    }
-
-    .transactions .transaction.preview-drag-before,
-    .transactions .date-separator.preview-drag-before {
-      box-shadow: inset 0 4px 0 #579df5;
-    }
-
-    .transactions .transaction.preview-drag-after,
-    .transactions .date-separator.preview-drag-after {
-      box-shadow: inset 0 -4px 0 #579df5;
-    }
-
 </style>
 </head>
 
@@ -1570,136 +1521,6 @@
         return (type === 'income' ? '+' : '−') + clean;
       }
 
-
-      let draggedTransactionIndex = null;
-
-      function moveTransaction(fromIndex, toIndex) {
-        if (!Number.isInteger(fromIndex) || !Number.isInteger(toIndex)) return;
-        if (fromIndex < 0 || fromIndex >= state.transactions.length) return;
-
-        const boundedTarget = Math.max(0, Math.min(state.transactions.length - 1, toIndex));
-        if (fromIndex === boundedTarget) return;
-
-        const [movedItem] = state.transactions.splice(fromIndex, 1);
-        state.transactions.splice(boundedTarget, 0, movedItem);
-
-        renderTransactionsEditor();
-        renderScreen();
-        saveAppState();
-      }
-
-      function clearEditorDragClasses() {
-        el.transactionsEditor.querySelectorAll('.transaction-editor').forEach(editor => {
-          editor.classList.remove('dragging', 'drag-over-before', 'drag-over-after');
-        });
-      }
-
-      function makeEditorDraggable(box, index) {
-        box.draggable = true;
-
-        box.addEventListener('dragstart', event => {
-          const target = event.target;
-          if (target instanceof HTMLElement && target.closest('input, select, button')) {
-            event.preventDefault();
-            return;
-          }
-
-          draggedTransactionIndex = index;
-          box.classList.add('dragging');
-          event.dataTransfer.effectAllowed = 'move';
-          event.dataTransfer.setData('text/plain', String(index));
-        });
-
-        box.addEventListener('dragover', event => {
-          if (draggedTransactionIndex === null || draggedTransactionIndex === index) return;
-          event.preventDefault();
-          event.dataTransfer.dropEffect = 'move';
-
-          const rect = box.getBoundingClientRect();
-          const placeAfter = event.clientY > rect.top + rect.height / 2;
-          box.classList.toggle('drag-over-before', !placeAfter);
-          box.classList.toggle('drag-over-after', placeAfter);
-        });
-
-        box.addEventListener('dragleave', event => {
-          if (box.contains(event.relatedTarget)) return;
-          box.classList.remove('drag-over-before', 'drag-over-after');
-        });
-
-        box.addEventListener('drop', event => {
-          event.preventDefault();
-          if (draggedTransactionIndex === null) return;
-
-          const rect = box.getBoundingClientRect();
-          const placeAfter = event.clientY > rect.top + rect.height / 2;
-          let targetIndex = index + (placeAfter ? 1 : 0);
-          const fromIndex = draggedTransactionIndex;
-
-          if (fromIndex < targetIndex) targetIndex -= 1;
-          clearEditorDragClasses();
-          draggedTransactionIndex = null;
-          moveTransaction(fromIndex, targetIndex);
-        });
-
-        box.addEventListener('dragend', () => {
-          clearEditorDragClasses();
-          draggedTransactionIndex = null;
-        });
-      }
-
-      function clearPreviewDragClasses() {
-        el.transactionsOutput.querySelectorAll('.transaction, .date-separator').forEach(row => {
-          row.classList.remove('preview-dragging', 'preview-drag-before', 'preview-drag-after');
-        });
-      }
-
-      function makePreviewRowDraggable(row, index) {
-        row.draggable = true;
-
-        row.addEventListener('dragstart', event => {
-          draggedTransactionIndex = index;
-          row.classList.add('preview-dragging');
-          event.dataTransfer.effectAllowed = 'move';
-          event.dataTransfer.setData('text/plain', String(index));
-        });
-
-        row.addEventListener('dragover', event => {
-          if (draggedTransactionIndex === null || draggedTransactionIndex === index) return;
-          event.preventDefault();
-          event.dataTransfer.dropEffect = 'move';
-
-          const rect = row.getBoundingClientRect();
-          const placeAfter = event.clientY > rect.top + rect.height / 2;
-          row.classList.toggle('preview-drag-before', !placeAfter);
-          row.classList.toggle('preview-drag-after', placeAfter);
-        });
-
-        row.addEventListener('dragleave', event => {
-          if (row.contains(event.relatedTarget)) return;
-          row.classList.remove('preview-drag-before', 'preview-drag-after');
-        });
-
-        row.addEventListener('drop', event => {
-          event.preventDefault();
-          if (draggedTransactionIndex === null) return;
-
-          const rect = row.getBoundingClientRect();
-          const placeAfter = event.clientY > rect.top + rect.height / 2;
-          let targetIndex = index + (placeAfter ? 1 : 0);
-          const fromIndex = draggedTransactionIndex;
-
-          if (fromIndex < targetIndex) targetIndex -= 1;
-          clearPreviewDragClasses();
-          draggedTransactionIndex = null;
-          moveTransaction(fromIndex, targetIndex);
-        });
-
-        row.addEventListener('dragend', () => {
-          clearPreviewDragClasses();
-          draggedTransactionIndex = null;
-        });
-      }
-
       function renderScreen() {
         el.monthOutput.textContent = state.month;
         el.expensesOutput.textContent = state.expenses;
@@ -1737,7 +1558,6 @@
               openTransactionEditor(state.transactions.indexOf(item));
             });
 
-            makePreviewRowDraggable(separator, state.transactions.indexOf(item));
             el.transactionsOutput.appendChild(separator);
             return;
           }
@@ -1769,7 +1589,6 @@
             openTransactionEditor(state.transactions.indexOf(item));
           });
 
-          makePreviewRowDraggable(row, state.transactions.indexOf(item));
           el.transactionsOutput.appendChild(row);
         });
       }
@@ -1813,7 +1632,6 @@
           const box = document.createElement('div');
           box.className = 'transaction-editor';
           box.dataset.transactionIndex = String(index);
-          makeEditorDraggable(box, index);
 
           if (item.kind === 'separator') {
             box.classList.add('separator-editor');
