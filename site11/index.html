@@ -80,6 +80,10 @@
       margin-bottom: 14px;
     }
 
+    .field[hidden] {
+      display: none;
+    }
+
     .field label {
       font-size: 12px;
       color: #aeb4c0;
@@ -962,11 +966,27 @@
     </div>
 
     <div class="field">
+      <label for="recipientTypeSelect">Перевод по</label>
+      <select id="recipientTypeSelect">
+        <option value="phone">Номеру телефона</option>
+        <option value="card">Номеру карты</option>
+      </select>
+    </div>
+
+    <div class="field" id="phoneField">
       <label for="phoneInput">Номер телефона</label>
       <input id="phoneInput" type="text" inputmode="numeric"
              maxlength="18" autocomplete="off"
              placeholder="+7 (904) 555-66-76"
              value="+7 (904) 555-66-76">
+    </div>
+
+    <div class="field" id="cardField" hidden>
+      <label for="cardInput">Номер карты</label>
+      <input id="cardInput" type="text" inputmode="numeric"
+             maxlength="19" autocomplete="off"
+             placeholder="2200 0300 0000 6400"
+             value="2200 0300 0000 6400">
     </div>
 
     <div class="field">
@@ -1137,7 +1157,7 @@
         <div class="recipient-card-inner">
           <div id="recipientNameOutput" class="recipient-card-top">Александр К.</div>
           <div class="recipient-card-bottom">
-            <div class="label">По номеру телефона</div>
+            <div id="recipientDestinationLabel" class="label">По номеру телефона</div>
             <div id="phoneOutput" class="value">+7 904 555-66-76</div>
           </div>
         </div>
@@ -1455,7 +1475,11 @@
     const amountInput = document.getElementById('amountInput');
     const accountInput = document.getElementById('accountInput');
     const nameInput = document.getElementById('nameInput');
+    const recipientTypeSelect = document.getElementById('recipientTypeSelect');
+    const phoneField = document.getElementById('phoneField');
     const phoneInput = document.getElementById('phoneInput');
+    const cardField = document.getElementById('cardField');
+    const cardInput = document.getElementById('cardInput');
     const bankSelect = document.getElementById('bankSelect');
     const bankLogo = document.getElementById('bankLogo');
     const bankLogoImage = document.getElementById('bankLogoImage');
@@ -1472,6 +1496,7 @@
     const minusAmountOutput = document.getElementById('minusAmountOutput');
     const accountOutput = document.getElementById('accountOutput');
     const recipientNameOutput = document.getElementById('recipientNameOutput');
+    const recipientDestinationLabel = document.getElementById('recipientDestinationLabel');
     const phoneOutput = document.getElementById('phoneOutput');
     const recipientCard = document.getElementById('recipientCard');
 
@@ -1535,6 +1560,20 @@
       return result;
     }
 
+    function formatCard(value) {
+      const digits = String(value || '').replace(/\D/g, '').slice(0, 16);
+      return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+    }
+
+    function maskCard(value) {
+      const digits = String(value || '').replace(/\D/g, '').slice(0, 16);
+      if (digits.length <= 10) return digits;
+
+      return digits.slice(0, 6)
+        + '*'.repeat(digits.length - 10)
+        + digits.slice(-4);
+    }
+
     function updateMoney() {
       balanceInput.value = formatBalanceInput(balanceInput.value);
       amountInput.value = formatAmountInput(amountInput.value);
@@ -1556,12 +1595,30 @@
     function updatePhone() {
       const formattedPhone = formatPhone(phoneInput.value);
       phoneInput.value = formattedPhone;
-      phoneOutput.textContent = formattedPhone;
+      updateRecipientDestination();
 
       requestAnimationFrame(() => {
         const end = phoneInput.value.length;
         phoneInput.setSelectionRange(end, end);
       });
+    }
+
+    function updateCard() {
+      cardInput.value = formatCard(cardInput.value);
+      updateRecipientDestination();
+
+      requestAnimationFrame(() => {
+        const end = cardInput.value.length;
+        cardInput.setSelectionRange(end, end);
+      });
+    }
+
+    function updateRecipientDestination() {
+      const isCardTransfer = recipientTypeSelect.value === 'card';
+      phoneField.hidden = isCardTransfer;
+      cardField.hidden = !isCardTransfer;
+      recipientDestinationLabel.textContent = isCardTransfer ? 'На карту' : 'По номеру телефона';
+      phoneOutput.textContent = isCardTransfer ? maskCard(cardInput.value) : phoneInput.value;
     }
 
     function setPreviewImage(bankKey, iconUrl) {
@@ -1656,6 +1713,8 @@
     accountInput.addEventListener('input', updateText);
     nameInput.addEventListener('input', updateText);
     phoneInput.addEventListener('input', updatePhone);
+    cardInput.addEventListener('input', updateCard);
+    recipientTypeSelect.addEventListener('change', updateRecipientDestination);
     bankSelect.addEventListener('change', updateBank);
 
     const savedInputValuesStorageKey = 'transferInputValuesV1';
@@ -1665,7 +1724,8 @@
       amountInput,
       accountInput,
       nameInput,
-      phoneInput
+      phoneInput,
+      cardInput
     ];
 
     function loadSavedInputValues() {
@@ -1807,6 +1867,7 @@
     updateMoney();
     updateText();
     updatePhone();
+    updateCard();
     updateBankIconInputs();
     updateBank();
     savedValueInputs.forEach(initSavedValueControl);
