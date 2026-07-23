@@ -90,7 +90,7 @@
     <button data-target="site7">ДЕКЛАРАЦИЯ</button>
     <button data-target="site8">СКРИНЫ БАЛАНСА</button>
     <button data-target="site9">ИСТОРИЯ ПЕЕРВОДОВ</button>
-
+    <button data-target="site11">ПЕРЕВОД Т-БАНК</button>
   </div>
 
   <!-- Все iframe загружены сразу -->
@@ -103,6 +103,7 @@
     <iframe id="site7" src="site7/index.html"></iframe>
     <iframe id="site8" src="site8/index.html"></iframe>
     <iframe id="site9" src="site9/index.html"></iframe>
+    <iframe id="site11" src="site11/index.html"></iframe>
   </div>
 
   <script>
@@ -116,7 +117,8 @@
       site6: document.getElementById('site6'),
       site7: document.getElementById('site7'),
       site8: document.getElementById('site8'),
-      site9: document.getElementById('site9')
+      site9: document.getElementById('site9'),
+      site11: document.getElementById('site11')
     };
 
     let savedSite = localStorage.getItem('activeSite') || 'site1';
