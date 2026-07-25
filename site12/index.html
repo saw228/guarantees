@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Генератор квитанции</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap");
+    :root {
+      --page-bg: #f2f3f5;
+      --panel-bg: #ffffff;
+      --paper: #ffffff;
+      --text: #3c3c3c;
+      --muted: #969696;
+      --yellow: #ffd600;
+      --blue: #0066c8;
+      --border: #dfe2e7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: "Roboto Condensed", "Arial Narrow", Arial, Helvetica, sans-serif;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 660px auto;
+      align-items: start;
+      justify-content: center;
+      gap: 28px;
+      width: min(100%, 1340px);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .editor {
+      position: relative;
+      width: 660px;
+      min-height: 0;
+      overflow: visible;
+      padding: 14px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 26px rgba(0,0,0,.06);
+    }
+
+    .editor-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      align-items: start;
+    }
+
+    .editor-column {
+      min-width: 0;
+    }
+
+    .editor-hidden {
+      display: none !important;
+    }
+
+    .editor h1 {
+      margin: 0 0 3px;
+      font-size: 20px;
+      color: #151515;
+    }
+
+    .editor-note {
+      margin: 0 0 10px;
+      color: #777;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .demo-warning {
+      margin-bottom: 10px;
+      padding: 8px 9px;
+      border: 1px solid #efb6b6;
+      border-radius: 10px;
+      background: #fff1f1;
+      color: #9b2020;
+      font-size: 10px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+      margin-bottom: 7px;
+    }
+
+    .preset-btn,
+    .action-btn {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: #fff;
+      color: #222;
+      padding: 7px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .preset-btn:hover,
+    .action-btn:hover {
+      border-color: #999;
+    }
+
+    .preset-btn.active {
+      background: #161616;
+      border-color: #161616;
+      color: #fff;
+    }
+
+    .section {
+      margin: 6px 0 0;
+      padding-top: 6px;
+      border-top: 1px solid #ececec;
+    }
+
+    .editor-column .section:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .section-title {
+      margin: 0 0 5px;
+      padding: 0;
+      color: #161616;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field {
+      margin-bottom: 4px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 2px;
+      color: #707070;
+      font-size: 10px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      height: 30px;
+      padding: 0 8px;
+      border: 1px solid #d9dce1;
+      border-radius: 7px;
+      outline: none;
+      background: #fff;
+      color: #222;
+      font-size: 11px;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #777;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 6px 0;
+      font-size: 11px;
+      color: #333;
+    }
+
+    .check input {
+      width: 14px;
+      height: 14px;
+      accent-color: #181818;
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 7px;
+    }
+
+    .action-btn {
+      min-height: 34px;
+      font-weight: 600;
+    }
+
+    .action-btn-primary {
+      border-color: #171717;
+      background: #171717;
+      color: #fff;
+    }
+
+    .action-btn-primary:hover {
+      border-color: #000;
+      background: #000;
+    }
+
+    .action-btn:disabled {
+      cursor: wait;
+      opacity: .58;
+    }
+
+    .action-status {
+      min-height: 15px;
+      margin-top: 6px;
+      color: #707070;
+      font-size: 10px;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .action-status.error {
+      color: #a60000;
+    }
+
+    .preview-area {
+      overflow: visible;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 0;
+      padding: 0;
+    }
+
+    .preview-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .preview-toolbar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: #777;
+      font-size: 11px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.04);
+    }
+
+    .zoom-buttons { display: flex; gap: 4px; }
+    .zoom-btn {
+      min-width: 38px;
+      height: 25px;
+      border: 1px solid #dfe2e7;
+      border-radius: 6px;
+      background: #fff;
+      color: #444;
+      font-size: 10px;
+      cursor: pointer;
+    }
+    .zoom-btn.active { background: #171717; color: #fff; border-color: #171717; }
+
+    .receipt-stage {
+      position: relative;
+      width: 377px;
+      height: 654px;
+    }
+
+    .receipt {
+      position: relative;
+      width: 449px;
+      min-height: 779px;
+      overflow: hidden;
+      background: var(--paper);
+      border: 1px solid #d8d8d8;
+      color: var(--text);
+      font-family: "Roboto Condensed", "Arial Narrow", Arial, Helvetica, sans-serif;
+      font-weight: 400;
+      font-stretch: condensed;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+      box-shadow: 0 10px 35px rgba(0,0,0,.10);
+    }
+
+    .receipt-inner {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      min-height: inherit;
+      padding: 42px 32px 28px;
+    }
+
+    .fixed-watermark {
+      position: absolute;
+      z-index: 8;
+      left: -63px;
+      top: 315px;
+      width: 575px;
+      text-align: center;
+      transform: rotate(-31deg);
+      pointer-events: none;
+      color: rgba(194, 0, 0, .14);
+      font: 800 31px/1.1 Arial, sans-serif;
+      letter-spacing: 2px;
+      white-space: nowrap;
+    }
+
+    .fixed-demo-strip {
+      position: absolute;
+      z-index: 10;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #a60000;
+      color: #fff;
+      font: 700 10px/1 Arial, sans-serif;
+      letter-spacing: .7px;
+      pointer-events: none;
+    }
+
+    .brand-logo {
+      position: relative;
+      width: 49px;
+      height: 51px;
+      margin: 0 auto 37px;
+      background: transparent;
+      overflow: hidden;
+    }
+
+    .brand-logo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .date {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 400;
+      letter-spacing: .02px;
+    }
+
+    .headline {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .headline-title,
+    .headline-total {
+      margin: 0;
+      color: #3a3a3a;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .headline-title {
+      font-family: "Roboto", Arial, Helvetica, sans-serif;
+      font-size: 25px;
+      font-weight: 700;
+      letter-spacing: -.15px;
+    }
+    .headline-total {
+      font-family: "Roboto", Arial, Helvetica, sans-serif;
+      font-size: 25px;
+      font-weight: 700;
+      letter-spacing: -.15px;
+      white-space: nowrap;
+    }
+
+    .yellow-line {
+      height: 1.2px;
+      margin-bottom: 21px;
+      background: var(--yellow);
+    }
+
+    .rows {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .receipt-row {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      align-items: start;
+      column-gap: 16px;
+      min-height: 34px;
+      color: #3b3b3b;
+      font-size: 14px;
+      line-height: 1.22;
+      font-weight: 400;
+      letter-spacing: -.04px;
+    }
+
+    .receipt-row .value {
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
+    .receipt-row.compact {
+      min-height: 25px;
+    }
+
+    .receipt-row.operation-id-row {
+      margin-bottom: 14px;
+    }
+
+    .stamp-wrap {
+      position: relative;
+      width: 279px;
+      height: 102px;
+      margin: 19px 19px 0 auto;
+      background: transparent;
+      overflow: hidden;
+    }
+
+    .stamp-wrap img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .bottom-area {
+      margin-top: 27px;
+    }
+
+    .footer-line {
+      height: 1.2px;
+      margin-bottom: 22px;
+      background: var(--yellow);
+    }
+
+    .receipt-number {
+      margin-bottom: 11px;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .footer-muted {
+      margin-bottom: 12px;
+      color: #9b9b9b;
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .footer-support {
+      color: #9b9b9b;
+      font-size: 14px;
+    }
+
+    .footer-support a {
+      color: #0078df;
+      text-decoration: none;
+    }
+
+    .internal-demo {
+      margin-top: 16px;
+      color: #a60000;
+      font: 700 10px/1.25 Arial, sans-serif;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
+    @media (max-width: 820px) {
+      .app {
+        grid-template-columns: 1fr;
+        width: min(100%, 520px);
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .editor {
+        position: relative;
+        top: auto;
+        width: 100%;
+        max-height: 440px;
+      }
+
+      .preview-area { min-height: auto; }
+    }
+
+    @media (max-width: 480px) {
+      .preview-column { width: 100%; }
+      .receipt-stage { max-width: 100%; }
+      .receipt { transform-origin: top left; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .editor, .preview-toolbar { display: none !important; }
+      .app { display: block; width: auto; padding: 0; }
+      .preview-area { padding: 0; display: block; }
+      .receipt-stage { width: 449px !important; height: auto !important; margin: 0 auto; }
+      .receipt {
+        transform: none !important;
+        margin: 0 auto;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="editor">
+      <h1>Генератор квитанции</h1>
+
+      <div class="preset-grid">
+        <button class="preset-btn active" data-preset="phone">Телефон</button>
+        <button class="preset-btn" data-preset="commission">В Тбанк по карте</button>
+        <button class="preset-btn" data-preset="minimal">В другой банк по карте</button>
+      </div>
+
+      <div class="editor-columns">
+        <div class="editor-column">
+      <section class="section">
+        <h2 class="section-title">Основные данные</h2>
+
+        <div class="field">
+          <label for="dateInput">Дата и время</label>
+          <input id="dateInput" value="23.07.2026 14:21:21" />
+        </div>
+
+        <div class="field">
+          <label for="statusInput">Статус</label>
+          <input id="statusInput" value="Успешно" />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="amountInput">Сумма</label>
+            <input id="amountInput" value="1 001 ₽" />
+          </div>
+          <div class="field">
+            <label for="feeInput">Комиссия</label>
+            <input id="feeInput" value="0 ₽" />
+          </div>
+        </div>
+
+        <input type="hidden" id="transferInput" value="По номеру карты" />
+      </section>
+      <section class="section">
+        <h2 class="section-title">Дополнительные строки</h2>
+
+        <label class="check">
+          <input type="checkbox" id="showFee" checked />
+          Показывать комиссию
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="showRecipient" checked />
+          Показывать получателя и банк
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="showExtra" />
+          Показывать СБП и счёт списания
+        </label>
+
+        <div id="extraFields">
+          <div class="field">
+            <label for="operationInput">Идентификатор операции СБП</label>
+            <input id="operationInput" value="" />
+          </div>
+
+          <div class="field">
+            <label for="debitInput">Счёт списания</label>
+            <input id="debitInput" value="423018102000****4737" />
+          </div>
+        </div>
+      </section>
+        </div>
+        <div class="editor-column">
+      <section class="section">
+        <h2 class="section-title">Участники</h2>
+
+        <div class="field">
+          <label for="senderInput">Отправитель</label>
+          <input id="senderInput" value="Иванова Мария" />
+        </div>
+
+        <div class="field">
+          <label for="destinationLabelInput">Название поля получателя</label>
+          <input id="destinationLabelInput" value="Карта получателя" />
+        </div>
+
+        <div class="field">
+          <label for="destinationInput">Карта / телефон</label>
+          <input id="destinationInput" value="220220******4598" />
+        </div>
+
+        <div class="field">
+          <label for="recipientInput">Получатель</label>
+          <input id="recipientInput" value="Алексей Б." />
+        </div>
+
+        <div class="field">
+          <label for="bankInput">Банк получателя</label>
+          <input id="bankInput" value="Банк" />
+        </div>
+      </section>
+      <section class="section">
+        <h2 class="section-title">Нижняя часть</h2>
+
+        <div class="field">
+          <label for="receiptInput">Номер квитанции</label>
+          <input id="receiptInput" value="" />
+        </div>
+
+        <div class="field">
+          <label for="supportInput">Поддержка</label>
+          <input id="supportInput" value="fb@tbank.ru" />
+        </div>
+
+        <div class="action-row">
+          <button class="action-btn" id="copyBtn" type="button">Скопировать скриншот</button>
+          <button class="action-btn action-btn-primary" id="savePdfBtn" type="button">Сохранить PDF</button>
+        </div>
+        <div class="action-status" id="actionStatus" aria-live="polite"></div>
+      </section>
+        </div>
+      </div>
+    </aside>
+
+    <main class="preview-area">
+      <div class="preview-column">
+        <div class="preview-toolbar">
+          <span>Предпросмотр 449 px</span>
+          <div class="zoom-buttons">
+            <button class="zoom-btn" data-zoom="0.75">75%</button>
+            <button class="zoom-btn active" data-zoom="0.84">84%</button>
+            <button class="zoom-btn" data-zoom="1">100%</button>
+          </div>
+        </div>
+
+        <div class="receipt-stage" id="receiptStage">
+        <section class="receipt" id="receipt">
+
+          <div class="receipt-inner">
+            <div class="brand-logo" aria-label="Место для логотипа">
+              <img src="source/tbank_Logo.png" alt="">
+            </div>
+
+            <div class="date" id="dateOut"></div>
+
+            <div class="headline">
+              <h2 class="headline-title">Итого</h2>
+              <div class="headline-total" id="totalOut"></div>
+            </div>
+
+            <div class="yellow-line"></div>
+
+            <div class="rows" id="rows"></div>
+
+            <div class="stamp-wrap" id="stampWrap" aria-label="Место для изображения печати и подписи">
+              <img src="source/singing.png" alt="">
+            </div>
+
+            <div class="bottom-area" id="bottomArea">
+              <div class="footer-line"></div>
+              <div class="receipt-number">Квитанция <span id="receiptOut"></span></div>
+              <div class="footer-muted">По вопросам зачисления обращайтесь к получателю</div>
+              <div class="footer-support">
+                Служба поддержки <a id="supportOut" href="#"></a>
+              </div>
+            </div>
+          </div>
+        </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const fieldIds = [
+      "dateInput", "statusInput", "amountInput", "feeInput",
+      "transferInput", "senderInput", "destinationLabelInput", "destinationInput",
+      "recipientInput", "bankInput", "operationInput", "debitInput",
+      "receiptInput", "supportInput", "showFee", "showRecipient", "showExtra"
+    ];
+
+    const presets = {
+      card: {
+        height: 779,
+        dateInput: "23.07.2026 14:21:21",
+        transferInput: "По номеру карты",
+        statusInput: "Успешно",
+        amountInput: "1 001 ₽",
+        feeInput: "0 ₽",
+        senderInput: "Иванова Мария",
+        destinationLabelInput: "Карта получателя",
+        destinationInput: "220220******4598",
+        recipientInput: "Алексей Б.",
+        bankInput: "Банк",
+        receiptInput: "№ Квитанция-1-126-288-336-103",
+        showFee: true,
+        showRecipient: true,
+        showExtra: false,
+        stampMargin: 19,
+        footerMargin: 27
+      },
+      phone: {
+        height: 828,
+        dateInput: "21.07.2026 11:56:07",
+        transferInput: "По номеру телефона",
+        statusInput: "Успешно",
+        amountInput: "5 050 ₽",
+        feeInput: "0 ₽",
+        senderInput: "Анна Морозова",
+        destinationLabelInput: "Телефон получателя",
+        destinationInput: "+7 (967) 349-92-24",
+        recipientInput: "Максим П.",
+        bankInput: "Банк",
+        operationInput: "B62020856074660U0B10180011810101",
+        debitInput: "423018102000****4737",
+        receiptInput: "№ Квитанция-1-134-216-279-203",
+        showFee: true,
+        showRecipient: true,
+        showExtra: true,
+        stampMargin: 15,
+        footerMargin: 18
+      },
+      commission: {
+        height: 782,
+        dateInput: "21.07.2026 19:13:48",
+        transferInput: "По номеру карты",
+        statusInput: "Успешно",
+        amountInput: "10 000 ₽",
+        feeInput: "580 ₽",
+        senderInput: "Сергей Хочубоев",
+        destinationLabelInput: "Карта получателя",
+        destinationInput: "546967******4195",
+        recipientInput: "Максим С.",
+        bankInput: "Банк",
+        receiptInput: "№ Квитанция-1-133-216-007-866",
+        showFee: true,
+        showRecipient: true,
+        showExtra: false,
+        stampMargin: 20,
+        footerMargin: 28
+      },
+      minimal: {
+        height: 686,
+        dateInput: "22.07.2026 22:01:57",
+        transferInput: "На карту",
+        statusInput: "Успешно",
+        amountInput: "2 005 ₽",
+        feeInput: "0 ₽",
+        senderInput: "Александра Половинкина",
+        destinationLabelInput: "Карта получателя",
+        destinationInput: "220024******1136",
+        recipientInput: "",
+        bankInput: "",
+        receiptInput: "№ Квитацния-1-116-377-612-179",
+        showFee: false,
+        showRecipient: false,
+        showExtra: false,
+        stampMargin: 8,
+        footerMargin: 23
+      }
+    };
+
+    let currentPreset = "card";
+    let previewScale = 0.84;
+
+    function randomDigit() {
+      if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+        const values = new Uint32Array(1);
+        window.crypto.getRandomValues(values);
+        return values[0] % 10;
+      }
+      return Math.floor(Math.random() * 10);
+    }
+
+    function randomDigits(length) {
+      return Array.from({ length }, () => randomDigit()).join("");
+    }
+
+    function generateReceiptNumber() {
+      return `№ Квитанция-1-${randomDigits(3)}-${randomDigits(3)}-${randomDigits(3)}-${randomDigits(3)}`;
+    }
+
+    function generateOperationId() {
+      const template = "B62020856074660U0B10180011810101";
+      return template.replace(/\d/g, () => randomDigit());
+    }
+
+    function randomizeGeneratedValues() {
+      $("receiptInput").value = generateReceiptNumber();
+      $("operationInput").value = generateOperationId();
+    }
+
+    function value(id) {
+      const el = $(id);
+      return el.type === "checkbox" ? el.checked : el.value;
+    }
+
+    function makeRow(label, val, compact = false) {
+      if (val === "" || val == null) return "";
+
+      const extraClass =
+        label === "Идентификатор операции СБП"
+          ? " operation-id-row"
+          : "";
+
+      return `
+        <div class="receipt-row ${compact ? "compact" : ""}${extraClass}">
+          <div class="label">${escapeHtml(label)}</div>
+          <div class="value">${escapeHtml(val)}</div>
+        </div>
+      `;
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function parseMoney(text) {
+      const cleaned = String(text)
+        .replace(/\s/g, "")
+        .replace(/[^0-9,.-]/g, "")
+        .replace(",", ".");
+      const number = Number(cleaned);
+      return Number.isFinite(number) ? number : null;
+    }
+
+    function formatRubles(number) {
+      const hasDecimals = Math.abs(number % 1) > 0.000001;
+      return new Intl.NumberFormat("ru-RU", {
+        minimumFractionDigits: hasDecimals ? 2 : 0,
+        maximumFractionDigits: 2
+      }).format(number).replace(/\u00a0/g, " ") + " ₽";
+    }
+
+    function getAutomaticTotal() {
+      const amount = parseMoney(value("amountInput"));
+      const fee = parseMoney(value("feeInput"));
+      if (amount === null) return value("amountInput");
+      return formatRubles(amount + (fee ?? 0));
+    }
+
+    function updateEditorVisibility() {
+      const showFee = value("showFee");
+      const showRecipient = value("showRecipient");
+      const showExtra = value("showExtra");
+
+      const setFieldVisible = (id, visible) => {
+        const el = $(id);
+        if (!el) return;
+        const field = el.closest(".field");
+        if (field) field.classList.toggle("editor-hidden", !visible);
+      };
+
+      setFieldVisible("feeInput", showFee);
+      setFieldVisible("recipientInput", showRecipient);
+      setFieldVisible("bankInput", showRecipient);
+
+      setFieldVisible("operationInput", showExtra);
+      setFieldVisible("debitInput", showExtra);
+
+      document.querySelectorAll(".check").forEach(el => {
+        el.classList.add("editor-hidden");
+      });
+
+      const extraFields = $("extraFields");
+      if (extraFields) {
+        extraFields.classList.toggle("editor-hidden", !showExtra);
+      }
+
+      const extraSection = $("operationInput")?.closest(".section");
+      if (extraSection) {
+        extraSection.classList.toggle("editor-hidden", !showExtra);
+      }
+    }
+
+    function render() {
+      updateEditorVisibility();
+
+      $("dateOut").textContent = value("dateInput");
+      $("totalOut").textContent = getAutomaticTotal();
+      $("receiptOut").textContent = value("receiptInput");
+      $("supportOut").textContent = value("supportInput");
+
+      const mail = value("supportInput");
+      $("supportOut").href = mail.includes("@") ? `mailto:${mail}` : "#";
+
+      let html = "";
+      html += makeRow("Перевод", value("transferInput"));
+      html += makeRow("Статус", value("statusInput"));
+      html += makeRow("Сумма", value("amountInput"));
+
+      if (value("showFee")) {
+        html += makeRow("Комиссия", value("feeInput"));
+      }
+
+      html += makeRow("Отправитель", value("senderInput"));
+      html += makeRow(value("destinationLabelInput"), value("destinationInput"));
+
+      if (value("showRecipient")) {
+        html += makeRow("Получатель", value("recipientInput"));
+        html += makeRow("Банк получателя", value("bankInput"));
+      }
+
+      if (value("showExtra")) {
+        html += makeRow("Идентификатор операции СБП", value("operationInput"), true);
+        html += makeRow("Счёт списания", value("debitInput"), true);
+      }
+
+      $("rows").innerHTML = html;
+      $("extraFields").style.display = "";
+
+      const p = presets[currentPreset];
+      $("receipt").style.minHeight = p.height + "px";
+      $("receipt").style.height = p.height + "px";
+      $("stampWrap").style.marginTop = p.stampMargin + "px";
+      $("bottomArea").style.marginTop = p.footerMargin + "px";
+
+      scalePreview();
+    }
+
+    function applyPreset(name) {
+      currentPreset = name;
+      const p = presets[name];
+
+      for (const [key, val] of Object.entries(p)) {
+        const el = $(key);
+        if (!el) continue;
+
+        if (el.type === "checkbox") el.checked = Boolean(val);
+        else el.value = val;
+      }
+
+      randomizeGeneratedValues();
+
+      document.querySelectorAll(".preset-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.preset === name);
+      });
+
+      render();
+    }
+
+    function saveState() {
+      const data = { currentPreset };
+      for (const id of fieldIds) data[id] = value(id);
+      localStorage.setItem("demoReceiptGenerator", JSON.stringify(data));
+
+      const btn = $("saveBtn");
+      const original = btn.textContent;
+      btn.textContent = "Сохранено";
+      setTimeout(() => btn.textContent = original, 1000);
+    }
+
+    function restoreState() {
+      try {
+        const raw = localStorage.getItem("demoReceiptGenerator");
+        if (!raw) return false;
+
+        const data = JSON.parse(raw);
+        currentPreset = data.currentPreset || "card";
+
+        for (const id of fieldIds) {
+          if (!(id in data) || !$(id)) continue;
+          if ($(id).type === "checkbox") $(id).checked = Boolean(data[id]);
+          else $(id).value = data[id];
+        }
+
+        document.querySelectorAll(".preset-btn").forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.preset === currentPreset);
+        });
+
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+
+    function setActionStatus(message, isError = false) {
+      const status = $("actionStatus");
+      status.textContent = message;
+      status.classList.toggle("error", isError);
+    }
+
+    function getReceiptDateForFileName() {
+      const raw = value("dateInput").trim();
+      const match = raw.match(/(\d{2}\.\d{2}\.\d{4})/);
+      return match ? match[1] : "receipt";
+    }
+
+    async function captureReceipt() {
+      if (typeof window.html2canvas !== "function") {
+        throw new Error("Не загрузился html2canvas.");
+      }
+
+      const receipt = $("receipt");
+      const stage = $("receiptStage");
+      const height = presets[currentPreset].height;
+
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+
+      const oldReceiptStyle = {
+        transform: receipt.style.transform,
+        transformOrigin: receipt.style.transformOrigin,
+        width: receipt.style.width,
+        height: receipt.style.height,
+        minHeight: receipt.style.minHeight,
+        boxShadow: receipt.style.boxShadow,
+        margin: receipt.style.margin
+      };
+
+      const oldStageStyle = {
+        width: stage.style.width,
+        height: stage.style.height,
+        overflow: stage.style.overflow
+      };
+
+      receipt.style.transform = "scale(1)";
+      receipt.style.transformOrigin = "top left";
+      receipt.style.width = "449px";
+      receipt.style.height = height + "px";
+      receipt.style.minHeight = height + "px";
+      receipt.style.boxShadow = "none";
+      receipt.style.margin = "0";
+
+      stage.style.width = "449px";
+      stage.style.height = height + "px";
+      stage.style.overflow = "visible";
+
+      await new Promise(resolve => setTimeout(resolve, 60));
+
+      try {
+        return await window.html2canvas(receipt, {
+          width: 449,
+          height: height,
+          scale: 2,
+          backgroundColor: "#ffffff",
+          useCORS: true,
+          logging: false
+        });
+      } finally {
+        receipt.style.transform = oldReceiptStyle.transform;
+        receipt.style.transformOrigin = oldReceiptStyle.transformOrigin;
+        receipt.style.width = oldReceiptStyle.width;
+        receipt.style.height = oldReceiptStyle.height;
+        receipt.style.minHeight = oldReceiptStyle.minHeight;
+        receipt.style.boxShadow = oldReceiptStyle.boxShadow;
+        receipt.style.margin = oldReceiptStyle.margin;
+
+        stage.style.width = oldStageStyle.width;
+        stage.style.height = oldStageStyle.height;
+        stage.style.overflow = oldStageStyle.overflow;
+
+        scalePreview();
+      }
+    }
+
+    async function copyReceiptToClipboard() {
+      const button = $("copyBtn");
+      const originalText = button.textContent;
+
+      button.disabled = true;
+      button.textContent = "Копирование…";
+      setActionStatus("");
+
+      try {
+        const canvas = await captureReceipt();
+
+        const blob = await new Promise((resolve, reject) => {
+          canvas.toBlob(result => {
+            if (result) resolve(result);
+            else reject(new Error("Не удалось создать изображение."));
+          }, "image/png");
+        });
+
+        await navigator.clipboard.write([
+          new ClipboardItem({ "image/png": blob })
+        ]);
+
+        button.textContent = "Скопировано";
+        button.classList.add("copied");
+        setActionStatus("Скриншот скопирован в буфер обмена");
+
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove("copied");
+        }, 2000);
+      } catch (error) {
+        button.textContent = originalText;
+        setActionStatus(
+          "Браузер не разрешил копирование. Открой страницу через HTTPS или localhost.",
+          true
+        );
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function saveReceiptAsPdf() {
+      const button = $("savePdfBtn");
+      const originalText = button.textContent;
+
+      button.disabled = true;
+      button.textContent = "Сохранение…";
+      setActionStatus("");
+
+      try {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          throw new Error("Не загрузился jsPDF.");
+        }
+
+        const canvas = await captureReceipt();
+        const imgData = canvas.toDataURL("image/jpeg", 0.92);
+        const { jsPDF } = window.jspdf;
+
+        const pageWidth = 106;
+        const pageHeight = pageWidth * (canvas.height / canvas.width);
+
+        const pdf = new jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: [pageWidth, pageHeight]
+        });
+
+        pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
+
+        const fileName = `receipt_${getReceiptDateForFileName()}.pdf`;
+        pdf.save(fileName);
+
+        button.textContent = "Сохранено";
+        setActionStatus(`Сохранено: ${fileName}`);
+
+        setTimeout(() => {
+          button.textContent = originalText;
+        }, 2000);
+      } catch (error) {
+        button.textContent = originalText;
+        setActionStatus("Не удалось сохранить PDF.", true);
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function scalePreview() {
+      const available = Math.max(270, Math.min(449, window.innerWidth - 28));
+      const responsiveScale = available / 449;
+      const scale = Math.min(previewScale, responsiveScale);
+      const h = presets[currentPreset].height;
+
+      $("receipt").style.transformOrigin = "top left";
+      $("receipt").style.transform = `scale(${scale})`;
+      $("receiptStage").style.width = (449 * scale) + "px";
+      $("receiptStage").style.height = (h * scale) + "px";
+    }
+
+    document.querySelectorAll(".preset-btn").forEach(btn => {
+      btn.addEventListener("click", () => applyPreset(btn.dataset.preset));
+    });
+
+    fieldIds.forEach(id => {
+      const el = $(id);
+      if (!el) return;
+      el.addEventListener(el.type === "checkbox" ? "change" : "input", render);
+    });
+
+    $("copyBtn").addEventListener("click", copyReceiptToClipboard);
+    $("savePdfBtn").addEventListener("click", saveReceiptAsPdf);
+
+    document.querySelectorAll(".zoom-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        previewScale = Number(btn.dataset.zoom);
+        document.querySelectorAll(".zoom-btn").forEach(item => item.classList.toggle("active", item === btn));
+        scalePreview();
+      });
+    });
+
+    window.addEventListener("resize", scalePreview);
+
+    applyPreset("card");
+  </script>
+</body>
+</html>
