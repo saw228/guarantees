@@ -824,6 +824,61 @@
       $("operationInput").value = generateOperationId();
     }
 
+    function formatPhoneNumber(rawValue) {
+      const source = String(rawValue);
+      let digits = source.replace(/\D/g, "");
+
+      if (digits.startsWith("7") || digits.startsWith("8")) {
+        digits = digits.slice(1);
+      }
+
+      digits = digits.slice(0, 10);
+      if (!digits && !/[78]/.test(source)) return "";
+
+      let formatted = "+7";
+      if (digits.length > 0) formatted += ` (${digits.slice(0, 3)}`;
+      if (digits.length >= 3) formatted += ")";
+      if (digits.length > 3) formatted += ` ${digits.slice(3, 6)}`;
+      if (digits.length > 6) formatted += `-${digits.slice(6, 8)}`;
+      if (digits.length > 8) formatted += `-${digits.slice(8, 10)}`;
+      return formatted;
+    }
+
+    function formatCardNumber(rawValue) {
+      const source = String(rawValue);
+      const firstStar = source.indexOf("*");
+
+      if (firstStar === -1) {
+        const digits = source.replace(/\D/g, "").slice(0, 16);
+        const prefix = digits.slice(0, 6);
+        const hiddenLength = Math.min(6, Math.max(0, digits.length - 6));
+        const suffix = digits.slice(12, 16);
+        return prefix + "*".repeat(hiddenLength) + suffix;
+      }
+
+      const lastStar = source.lastIndexOf("*");
+      const prefix = source.slice(0, firstStar).replace(/\D/g, "").slice(0, 6);
+      const starCount = Math.min(6, (source.match(/\*/g) || []).length);
+      let trailingDigits = source.slice(lastStar + 1).replace(/\D/g, "");
+      const starsToAdd = Math.min(6 - starCount, trailingDigits.length);
+      const hiddenLength = starCount + starsToAdd;
+
+      trailingDigits = trailingDigits.slice(starsToAdd);
+      const suffix = hiddenLength === 6 ? trailingDigits.slice(0, 4) : "";
+      return prefix + "*".repeat(hiddenLength) + suffix;
+    }
+
+    function formatDestinationInput() {
+      const input = $("destinationInput");
+      const isPhone = currentPreset === "phone";
+
+      input.value = isPhone
+        ? formatPhoneNumber(input.value)
+        : formatCardNumber(input.value);
+      input.maxLength = isPhone ? 18 : 16;
+      input.inputMode = "numeric";
+    }
+
     function value(id) {
       const el = $(id);
       return el.type === "checkbox" ? el.checked : el.value;
@@ -969,6 +1024,7 @@
         else el.value = val;
       }
 
+      formatDestinationInput();
       randomizeGeneratedValues();
 
       document.querySelectorAll(".preset-btn").forEach(btn => {
@@ -1200,7 +1256,10 @@
     fieldIds.forEach(id => {
       const el = $(id);
       if (!el) return;
-      el.addEventListener(el.type === "checkbox" ? "change" : "input", render);
+      el.addEventListener(el.type === "checkbox" ? "change" : "input", () => {
+        if (id === "destinationInput") formatDestinationInput();
+        render();
+      });
     });
 
     $("copyBtn").addEventListener("click", copyReceiptToClipboard);

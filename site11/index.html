@@ -1138,7 +1138,7 @@
 
       <div class="screen-title">Перевод</div>
 
-      <div class="sbp-line" style="display: flex; align-items: center; margin-left: 70px;">
+      <div id="sbpLine" class="sbp-line" style="display: flex; align-items: center; margin-left: 70px;">
         <img style="width: 25px;" src="source/sbp.png" alt="">
         Через Систему быстрых платежей
       </div>
@@ -1499,6 +1499,7 @@
     const recipientDestinationLabel = document.getElementById('recipientDestinationLabel');
     const phoneOutput = document.getElementById('phoneOutput');
     const recipientCard = document.getElementById('recipientCard');
+    const sbpLine = document.getElementById('sbpLine');
 
     function parseMoney(value) {
       return Number(value.replace(/\s/g, '').replace(',', '.').replace(/[^\d.]/g, '')) || 0;
@@ -1617,6 +1618,7 @@
       const isCardTransfer = recipientTypeSelect.value === 'card';
       phoneField.hidden = isCardTransfer;
       cardField.hidden = !isCardTransfer;
+      sbpLine.style.display = isCardTransfer ? 'none' : 'flex';
       recipientDestinationLabel.textContent = isCardTransfer ? 'На карту' : 'По номеру телефона';
       phoneOutput.textContent = isCardTransfer ? maskCard(cardInput.value) : phoneInput.value;
     }
