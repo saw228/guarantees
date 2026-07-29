@@ -610,11 +610,6 @@
         </div>
 
         <div class="field">
-          <label for="destinationLabelInput">Название поля получателя</label>
-          <input id="destinationLabelInput" value="Карта получателя" />
-        </div>
-
-        <div class="field">
           <label for="destinationInput">Карта / телефон</label>
           <input id="destinationInput" value="220220******4598" />
         </div>
@@ -708,7 +703,7 @@
 
     const fieldIds = [
       "dateInput", "statusInput", "amountInput", "feeInput",
-      "transferInput", "senderInput", "destinationLabelInput", "destinationInput",
+      "transferInput", "senderInput", "destinationInput",
       "recipientInput", "bankInput", "operationInput", "debitInput",
       "receiptInput", "supportInput", "showFee", "showRecipient", "showExtra"
     ];
@@ -722,7 +717,6 @@
         amountInput: "1 001 ₽",
         feeInput: "0 ₽",
         senderInput: "Иванова Мария",
-        destinationLabelInput: "Карта получателя",
         destinationInput: "220220******4598",
         recipientInput: "Алексей Б.",
         bankInput: "Банк",
@@ -741,7 +735,6 @@
         amountInput: "5 050 ₽",
         feeInput: "0 ₽",
         senderInput: "Анна Морозова",
-        destinationLabelInput: "Телефон получателя",
         destinationInput: "+7 (967) 349-92-24",
         recipientInput: "Максим П.",
         bankInput: "Банк",
@@ -762,7 +755,6 @@
         amountInput: "10 000 ₽",
         feeInput: "580 ₽",
         senderInput: "Сергей Хочубоев",
-        destinationLabelInput: "Карта получателя",
         destinationInput: "546967******4195",
         recipientInput: "Максим С.",
         bankInput: "Банк",
@@ -781,7 +773,6 @@
         amountInput: "2 005 ₽",
         feeInput: "0 ₽",
         senderInput: "Александра Половинкина",
-        destinationLabelInput: "Карта получателя",
         destinationInput: "220024******1136",
         recipientInput: "",
         bankInput: "",
@@ -875,7 +866,9 @@
       input.value = isPhone
         ? formatPhoneNumber(input.value)
         : formatCardNumber(input.value);
-      input.maxLength = isPhone ? 18 : 16;
+      // A pasted 16-digit card number can contain spaces or dashes. Give the
+      // browser enough room to receive it before formatCardNumber strips them.
+      input.maxLength = isPhone ? 18 : 32;
       input.inputMode = "numeric";
     }
 
@@ -988,7 +981,9 @@
       }
 
       html += makeRow("Отправитель", value("senderInput"));
-      html += makeRow(value("destinationLabelInput"), value("destinationInput"));
+      const destinationLabel =
+        currentPreset === "phone" ? "Телефон получателя" : "Карта получателя";
+      html += makeRow(destinationLabel, value("destinationInput"));
 
       if (value("showRecipient")) {
         html += makeRow("Получатель", value("recipientInput"));
