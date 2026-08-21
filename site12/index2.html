@@ -556,30 +556,25 @@
           <input id="statusInput" value="Успешно" />
         </div>
 
-        <div class="field">
-          <label for="transferInput">Перевод</label>
-          <input id="transferInput" value="Клиенту Т-Банка" />
-        </div>
-
         <div class="field-row">
           <div class="field">
-            <label for="amountInput">Сумма (только цифры)</label>
-            <input id="amountInput" value="1001" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" />
+            <label for="amountInput">Сумма</label>
+            <input id="amountInput" value="1 001 ₽" />
           </div>
           <div class="field">
-            <label for="feeInput">Комиссия (только цифры)</label>
-            <input id="feeInput" value="0" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" />
+            <label for="feeInput">Комиссия</label>
+            <input id="feeInput" value="0 ₽" />
           </div>
         </div>
 
+        <input type="hidden" id="transferInput" value="По номеру карты" />
       </section>
       <section class="section">
         <h2 class="section-title">Дополнительные строки</h2>
 
-        <!-- Добавил id у label, чтобы управлять видимостью чекбокса по пресету -->
-        <label class="check" id="showFeeCheck">
+        <label class="check">
           <input type="checkbox" id="showFee" checked />
-          Есть комиссия
+          Показывать комиссию
         </label>
 
         <label class="check">
@@ -717,17 +712,16 @@
       card: {
         height: 779,
         dateInput: "23.07.2026 14:21:21",
-        transferInput: "Клиенту Т-Банка",
+        transferInput: "По номеру карты",
         statusInput: "Успешно",
-        amountInput: "1001",
-        feeInput: "0",
+        amountInput: "1 001 ₽",
+        feeInput: "0 ₽",
         senderInput: "Иванова Мария",
         destinationInput: "220220******4598",
         recipientInput: "Алексей Б.",
         bankInput: "Банк",
         receiptInput: "№ Квитанция-1-126-288-336-103",
         showFee: true,
-        allowFee: true,
         showRecipient: true,
         showExtra: false,
         stampMargin: 19,
@@ -736,10 +730,10 @@
       phone: {
         height: 828,
         dateInput: "21.07.2026 11:56:07",
-        transferInput: "Клиенту Т-Банка",
+        transferInput: "По номеру телефона",
         statusInput: "Успешно",
-        amountInput: "5050",
-        feeInput: "0",
+        amountInput: "5 050 ₽",
+        feeInput: "0 ₽",
         senderInput: "Анна Морозова",
         destinationInput: "+7 (967) 349-92-24",
         recipientInput: "Максим П.",
@@ -748,47 +742,42 @@
         debitInput: "423018102000****4737",
         receiptInput: "№ Квитанция-1-134-216-279-203",
         showFee: true,
-        allowFee: true,
         showRecipient: true,
         showExtra: true,
         stampMargin: 15,
         footerMargin: 18
       },
       commission: {
-        // "В Тбанк по карте" — комиссия убрана полностью
         height: 782,
         dateInput: "21.07.2026 19:13:48",
-        transferInput: "Клиенту Т-Банка",
+        transferInput: "По номеру карты",
         statusInput: "Успешно",
-        amountInput: "10000",
-        feeInput: "0",
+        amountInput: "10 000 ₽",
+        feeInput: "580 ₽",
         senderInput: "Сергей Хочубоев",
         destinationInput: "546967******4195",
         recipientInput: "Максим С.",
         bankInput: "Банк",
         receiptInput: "№ Квитанция-1-133-216-007-866",
-        showFee: false,     // скрыть и не учитывать
-        allowFee: false,    // отключить возможность менять комиссию в этом пресете
+        showFee: true,
         showRecipient: true,
         showExtra: false,
         stampMargin: 20,
         footerMargin: 28
       },
       minimal: {
-        // "В другой банк по карте" — комиссия доступна и может быть включена/исключена
         height: 686,
         dateInput: "22.07.2026 22:01:57",
-        transferInput: "Клиенту Т-Банка",
+        transferInput: "На карту",
         statusInput: "Успешно",
-        amountInput: "2005",
-        feeInput: "0",
+        amountInput: "2 005 ₽",
+        feeInput: "0 ₽",
         senderInput: "Александра Половинкина",
         destinationInput: "220024******1136",
         recipientInput: "",
         bankInput: "",
         receiptInput: "№ Квитацния-1-116-377-612-179",
-        showFee: true,
-        allowFee: true,
+        showFee: false,
         showRecipient: false,
         showExtra: false,
         stampMargin: 8,
@@ -796,8 +785,6 @@
       }
     };
 
-    // флаг текущего пресета, влияет на доступность комиссии
-    window.allowFeeCurrent = true;
     let currentPreset = "card";
     let previewScale = 0.84;
 
@@ -879,6 +866,8 @@
       input.value = isPhone
         ? formatPhoneNumber(input.value)
         : formatCardNumber(input.value);
+      // A pasted 16-digit card number can contain spaces or dashes. Give the
+      // browser enough room to receive it before formatCardNumber strips them.
       input.maxLength = isPhone ? 18 : 32;
       input.inputMode = "numeric";
     }
@@ -914,10 +903,9 @@
     }
 
     function parseMoney(text) {
-      // Accept numbers entered in editor like "1000", "1 000", "1000.50" or "1 000,50"
       const cleaned = String(text)
         .replace(/\s/g, "")
-        .replace(/[^0-9,.\-]/g, "")
+        .replace(/[^0-9,.-]/g, "")
         .replace(",", ".");
       const number = Number(cleaned);
       return Number.isFinite(number) ? number : null;
@@ -925,7 +913,6 @@
 
     function formatRubles(number) {
       const hasDecimals = Math.abs(number % 1) > 0.000001;
-      // Use the ₽ symbol on the receipt
       return new Intl.NumberFormat("ru-RU", {
         minimumFractionDigits: hasDecimals ? 2 : 0,
         maximumFractionDigits: 2
@@ -934,10 +921,8 @@
 
     function getAutomaticTotal() {
       const amount = parseMoney(value("amountInput"));
-      let fee = parseMoney(value("feeInput"));
+      const fee = parseMoney(value("feeInput"));
       if (amount === null) return value("amountInput");
-      // учитываем комиссию только если она доступна в пресете и включена
-      if (!window.allowFeeCurrent || !value("showFee") || fee === null) fee = 0;
       return formatRubles(amount + (fee ?? 0));
     }
 
@@ -953,22 +938,15 @@
         if (field) field.classList.toggle("editor-hidden", !visible);
       };
 
-      // если в текущем пресете комиссия недоступна, скрываем чекбокс и поле
-      const allowFee = window.allowFeeCurrent !== false;
-      const showFeeLabel = $("showFeeCheck");
-      if (showFeeLabel) showFeeLabel.classList.toggle("editor-hidden", !allowFee);
-
-      setFieldVisible("feeInput", allowFee && showFee);
+      setFieldVisible("feeInput", showFee);
       setFieldVisible("recipientInput", showRecipient);
       setFieldVisible("bankInput", showRecipient);
 
       setFieldVisible("operationInput", showExtra);
       setFieldVisible("debitInput", showExtra);
 
-      // убедимся, что остальные чекбоксы видимы
       document.querySelectorAll(".check").forEach(el => {
-        if (el.id === "showFeeCheck") return;
-        el.classList.remove("editor-hidden");
+        el.classList.add("editor-hidden");
       });
 
       const extraFields = $("extraFields");
@@ -994,44 +972,22 @@
       $("supportOut").href = mail.includes("@") ? `mailto:${mail}` : "#";
 
       let html = "";
-      // Перевод
       html += makeRow("Перевод", value("transferInput"));
-
-      // Статус
       html += makeRow("Статус", value("statusInput"));
+      html += makeRow("Сумма", value("amountInput"));
 
-      // Сумма — на чеке показываем с валютой (₽)
-      const amountNum = parseMoney(value("amountInput"));
-      html += makeRow("Сумма", amountNum === null ? value("amountInput") : formatRubles(amountNum));
-
-      // Комиссия — показываем только если разрешено в пресете и включено
-      if (window.allowFeeCurrent && value("showFee")) {
-        const feeNum = parseMoney(value("feeInput"));
-        html += makeRow("Комиссия", feeNum === null ? value("feeInput") : formatRubles(feeNum));
+      if (value("showFee")) {
+        html += makeRow("Комиссия", value("feeInput"));
       }
 
-      // Для всех пресетов, кроме commission, показываем Отправитель ДО карты/телефона
-      if (currentPreset !== "commission") {
-        html += makeRow("Отправитель", value("senderInput"));
-      }
-
+      html += makeRow("Отправитель", value("senderInput"));
       const destinationLabel =
         currentPreset === "phone" ? "Телефон получателя" : "Карта получателя";
       html += makeRow(destinationLabel, value("destinationInput"));
 
-      // Для commission: добавляем строку Отправитель ПОСЛЕ "Карта получателя"
-      if (currentPreset === "commission") {
-        html += makeRow("Отправитель", value("senderInput"));
-      }
-
-      // Получатель и Банк — showRecipient контролирует,
-      // но для commission "Банк получателя" по прежнему не выводим (требование)
-      if (value("showRecipient") && currentPreset !== "commission") {
+      if (value("showRecipient")) {
         html += makeRow("Получатель", value("recipientInput"));
         html += makeRow("Банк получателя", value("bankInput"));
-      } else if (value("showRecipient") && currentPreset === "commission") {
-        // В commission: показываем только "Получатель" (если включён), но не "Банк получателя"
-        html += makeRow("Получатель", value("recipientInput"));
       }
 
       if (value("showExtra")) {
@@ -1063,24 +1019,6 @@
         else el.value = val;
       }
 
-      // установить доступность комиссии в текущем пресете
-      window.allowFeeCurrent = p.allowFee !== false;
-
-      // если комиссия недоступна в пресете — сбросить флаг и скрыть чекбокс
-      const showFeeEl = $("showFee");
-      const showFeeLabel = $("showFeeCheck");
-      if (showFeeEl) {
-        if (!window.allowFeeCurrent) {
-          showFeeEl.checked = false;
-          showFeeEl.disabled = true;
-        } else {
-          showFeeEl.disabled = false;
-          // если в пресете явно указано showFee — оставить его
-          if (typeof p.showFee === "boolean") showFeeEl.checked = p.showFee;
-        }
-      }
-      if (showFeeLabel) showFeeLabel.classList.toggle("editor-hidden", !window.allowFeeCurrent);
-
       formatDestinationInput();
       randomizeGeneratedValues();
 
@@ -1091,94 +1029,44 @@
       render();
     }
 
-    // Очищаем ввод в полях суммы и комиссии — оставляем только цифры, точку или запятую
-    function sanitizeNumericInput(el) {
-      if (!el) return;
-      el.addEventListener("input", () => {
-        const cleaned = el.value.replace(/[^0-9,.\-]/g, "");
-        if (el.value !== cleaned) el.value = cleaned;
-        render();
-      });
+    function saveState() {
+      const data = { currentPreset };
+      for (const id of fieldIds) data[id] = value(id);
+      localStorage.setItem("demoReceiptGenerator", JSON.stringify(data));
+
+      const btn = $("saveBtn");
+      const original = btn.textContent;
+      btn.textContent = "Сохранено";
+      setTimeout(() => btn.textContent = original, 1000);
     }
 
-    document.querySelectorAll(".preset-btn").forEach(btn => {
-      btn.addEventListener("click", () => applyPreset(btn.dataset.preset));
-    });
+    function restoreState() {
+      try {
+        const raw = localStorage.getItem("demoReceiptGenerator");
+        if (!raw) return false;
 
-    fieldIds.forEach(id => {
-      const el = $(id);
-      if (!el) return;
-      if (id === "amountInput" || id === "feeInput") {
-        sanitizeNumericInput(el);
-      } else {
-        el.addEventListener(el.type === "checkbox" ? "change" : "input", () => {
-          if (id === "destinationInput") formatDestinationInput();
-          render();
+        const data = JSON.parse(raw);
+        currentPreset = data.currentPreset || "card";
+
+        for (const id of fieldIds) {
+          if (!(id in data) || !$(id)) continue;
+          if ($(id).type === "checkbox") $(id).checked = Boolean(data[id]);
+          else $(id).value = data[id];
+        }
+
+        document.querySelectorAll(".preset-btn").forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.preset === currentPreset);
         });
+
+        return true;
+      } catch {
+        return false;
       }
-    });
+    }
 
-    $("copyBtn").addEventListener("click", async () => {
-      const button = $("copyBtn");
-      const originalText = button.textContent;
-      button.disabled = true;
-      button.textContent = "Копирование…";
-      setActionStatus("");
-      try {
-        const canvas = await captureReceipt();
-        const blob = await new Promise((resolve, reject) => {
-          canvas.toBlob(result => {
-            if (result) resolve(result);
-            else reject(new Error("Не удалось создать изображение."));
-          }, "image/png");
-        });
-        await navigator.clipboard.write([ new ClipboardItem({ "image/png": blob }) ]);
-        button.textContent = "Скопировано";
-        setActionStatus("Скриншот скопирован в буфер обмена");
-        setTimeout(() => { button.textContent = originalText; }, 2000);
-      } catch (err) {
-        setActionStatus("Браузер не разрешил копирование. Открой страницу через HTTPS или localhost.", true);
-      } finally { button.disabled = false; }
-    });
-
-    $("savePdfBtn").addEventListener("click", async () => {
-      const button = $("savePdfBtn");
-      const originalText = button.textContent;
-      button.disabled = true;
-      button.textContent = "Сохранение…";
-      setActionStatus("");
-      try {
-        if (!window.jspdf || !window.jspdf.jsPDF) throw new Error("Не загрузился jsPDF.");
-        const canvas = await captureReceipt();
-        const imgData = canvas.toDataURL("image/jpeg", 0.92);
-        const { jsPDF } = window.jspdf;
-        const pageWidth = 106;
-        const pageHeight = pageWidth * (canvas.height / canvas.width);
-        const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: [pageWidth, pageHeight] });
-        pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
-        const fileName = `receipt_${getReceiptDateForFileName()}.pdf`;
-        pdf.save(fileName);
-        button.textContent = "Сохранено";
-        setActionStatus(`Сохранено: ${fileName}`);
-        setTimeout(() => { button.textContent = originalText; }, 2000);
-      } catch (err) {
-        setActionStatus("Не удалось сохранить PDF.", true);
-      } finally { button.disabled = false; }
-    });
-
-    document.querySelectorAll(".zoom-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        previewScale = Number(btn.dataset.zoom);
-        document.querySelectorAll(".zoom-btn").forEach(item => item.classList.toggle("active", item === btn));
-        scalePreview();
-      });
-    });
-
-    window.addEventListener("resize", scalePreview);
 
     function setActionStatus(message, isError = false) {
       const status = $("actionStatus");
-      if (!status) return;
       status.textContent = message;
       status.classList.toggle("error", isError);
     }
@@ -1258,6 +1146,92 @@
       }
     }
 
+    async function copyReceiptToClipboard() {
+      const button = $("copyBtn");
+      const originalText = button.textContent;
+
+      button.disabled = true;
+      button.textContent = "Копирование…";
+      setActionStatus("");
+
+      try {
+        const canvas = await captureReceipt();
+
+        const blob = await new Promise((resolve, reject) => {
+          canvas.toBlob(result => {
+            if (result) resolve(result);
+            else reject(new Error("Не удалось создать изображение."));
+          }, "image/png");
+        });
+
+        await navigator.clipboard.write([
+          new ClipboardItem({ "image/png": blob })
+        ]);
+
+        button.textContent = "Скопировано";
+        button.classList.add("copied");
+        setActionStatus("Скриншот скопирован в буфер обмена");
+
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove("copied");
+        }, 2000);
+      } catch (error) {
+        button.textContent = originalText;
+        setActionStatus(
+          "Браузер не разрешил копирование. Открой страницу через HTTPS или localhost.",
+          true
+        );
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function saveReceiptAsPdf() {
+      const button = $("savePdfBtn");
+      const originalText = button.textContent;
+
+      button.disabled = true;
+      button.textContent = "Сохранение…";
+      setActionStatus("");
+
+      try {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          throw new Error("Не загрузился jsPDF.");
+        }
+
+        const canvas = await captureReceipt();
+        const imgData = canvas.toDataURL("image/jpeg", 0.92);
+        const { jsPDF } = window.jspdf;
+
+        const pageWidth = 106;
+        const pageHeight = pageWidth * (canvas.height / canvas.width);
+
+        const pdf = new jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: [pageWidth, pageHeight]
+        });
+
+        pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
+
+        const fileName = `receipt_${getReceiptDateForFileName()}.pdf`;
+        pdf.save(fileName);
+
+        button.textContent = "Сохранено";
+        setActionStatus(`Сохранено: ${fileName}`);
+
+        setTimeout(() => {
+          button.textContent = originalText;
+        }, 2000);
+      } catch (error) {
+        button.textContent = originalText;
+        setActionStatus("Не удалось сохранить PDF.", true);
+      } finally {
+        button.disabled = false;
+      }
+    }
+
     function scalePreview() {
       const available = Math.max(270, Math.min(449, window.innerWidth - 28));
       const responsiveScale = available / 449;
@@ -1270,8 +1244,32 @@
       $("receiptStage").style.height = (h * scale) + "px";
     }
 
-    // Восстановление состояния (если нужно)
-    try { restoreState(); } catch {}
+    document.querySelectorAll(".preset-btn").forEach(btn => {
+      btn.addEventListener("click", () => applyPreset(btn.dataset.preset));
+    });
+
+    fieldIds.forEach(id => {
+      const el = $(id);
+      if (!el) return;
+      el.addEventListener(el.type === "checkbox" ? "change" : "input", () => {
+        if (id === "destinationInput") formatDestinationInput();
+        render();
+      });
+    });
+
+    $("copyBtn").addEventListener("click", copyReceiptToClipboard);
+    $("savePdfBtn").addEventListener("click", saveReceiptAsPdf);
+
+    document.querySelectorAll(".zoom-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        previewScale = Number(btn.dataset.zoom);
+        document.querySelectorAll(".zoom-btn").forEach(item => item.classList.toggle("active", item === btn));
+        scalePreview();
+      });
+    });
+
+    window.addEventListener("resize", scalePreview);
+
     applyPreset("card");
   </script>
 </body>
